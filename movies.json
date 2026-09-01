@@ -8,6 +8,10 @@
       {
         "epTitle": "ភាគ ១",
         "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      },
+      {
+        "epTitle": "ភាគ ២",
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
       }
     ]
   }
