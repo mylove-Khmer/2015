@@ -1,17 +1,13 @@
 [
   {
     "id": "1",
-    "title": "រឿង បណ្តាសាក្រៅ ២",
+    "title": "ឈ្មោះរឿងរបស់អ្នក",
     "price": "$2.50",
     "cover": "cover1.jpg",
     "episodes": [
       {
         "epTitle": "ភាគ ១",
-        "videoUrl": "ep1.mp4"
-      },
-      {
-        "epTitle": "ភាគ ២",
-        "videoUrl": "ep2.mp4"
+        "videoUrl": "https://www.youtube.com/watch?v=wqDMawHXPPY"
       }
     ]
   }
