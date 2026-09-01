@@ -6,19 +6,25 @@
   <title>Angkor DC - Movie Stream</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
-    body { background-color: #0d0d11; }
+    body { 
+      font-family: 'Kantumruy Pro', sans-serif;
+      background-color: #0d0d11; 
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="text-white pb-24 select-none font-sans">
+<body class="text-white pb-24 select-none">
 
   <!-- Navbar -->
-  <header class="fixed top-0 inset-x-0 h-16 bg-black/60 backdrop-blur-md z-40 flex items-center justify-between px-4 md:px-8 border-b border-white/5">
+  <header class="fixed top-0 inset-x-0 h-16 bg-black/70 backdrop-blur-md z-40 flex items-center justify-between px-4 md:px-8 border-b border-white/5">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">A</div>
-      <span class="text-lg md:text-xl font-bold tracking-tight">Angkor DC</span>
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">A</div>
+      <span class="text-lg md:text-xl font-bold tracking-tight text-white">Angkor DC</span>
     </div>
     <div class="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center">
       <i data-lucide="user" class="w-5 h-5 text-neutral-300"></i>
@@ -30,7 +36,10 @@
 
   <!-- Movie List Carousel -->
   <section class="px-6 mt-4">
-    <h2 class="text-lg font-bold mb-4">ភាពយន្ត និងរឿងភាគទាំងអស់</h2>
+    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+      <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
+      <span>ភាពយន្ត និងរឿងភាគទាំងអស់</span>
+    </h2>
     <div id="moviesRow" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
   </section>
 
@@ -59,8 +68,8 @@
     <div class="w-full max-w-4xl relative mt-2 md:mt-6">
       <div class="flex items-center justify-between mb-3">
         <h3 id="playerMovieTitle" class="font-bold text-base md:text-lg text-amber-400 truncate">ចំណងជើងរឿង</h3>
-        <button onclick="closePlayer()" class="text-neutral-400 hover:text-white flex items-center gap-1 font-bold text-sm bg-neutral-800/80 px-3 py-1.5 rounded-lg">
-          <i data-lucide="x" class="w-5 h-5"></i> បិទ
+        <button onclick="closePlayer()" class="text-neutral-400 hover:text-white flex items-center gap-1 font-bold text-xs bg-neutral-800 px-3 py-2 rounded-xl border border-neutral-700">
+          <i data-lucide="x" class="w-4 h-4"></i> បិទ
         </button>
       </div>
 
@@ -79,10 +88,10 @@
     </div>
   </div>
 
-  <!-- Modal ស្កេន KHQR -->
+  <!-- Modal ស្កេន KHQR (លោតគ្រប់ភាគទាំងអស់បើអត់ទាន់បង់ប្រាក់) -->
   <div id="qrPayModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4 overflow-y-auto">
     <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 md:p-7 max-w-md w-full relative shadow-2xl text-center my-auto">
-      <button onclick="closeQrModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white bg-neutral-800/80 p-1.5 rounded-full">
+      <button onclick="closeQrModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white bg-neutral-800 p-1.5 rounded-full">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
@@ -90,10 +99,12 @@
       <p id="qrMovieNotice" class="text-xs text-amber-400 mb-1 font-semibold">រឿង៖ បណ្តាសាក្រៅ ២ ($2.50)</p>
       <p class="text-[11px] text-neutral-400 mb-3">លោកអ្នកមិនទាន់បានបង់ប្រាក់ទស្សនារឿងនេះទេ។ សូមស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់៖</p>
 
+      <!-- រូប QR Code ទំហំធំ ច្បាស់ល្អ -->
       <div class="bg-white p-3 rounded-2xl inline-block mb-4 border-2 border-red-500 shadow-2xl max-w-[280px] md:max-w-[320px] w-full">
         <img id="guestKhqrImg" src="khqr.png" class="w-full h-auto object-contain mx-auto rounded-xl" />
       </div>
 
+      <!-- Form ផ្ញើ Slip ទៅ Telegram Bot -->
       <form id="slipForm" class="space-y-3 text-left">
         <div>
           <label class="text-xs text-neutral-300 block mb-1">តម្លៃត្រូវបង់ ($)៖</label>
@@ -106,7 +117,8 @@
         </div>
 
         <button type="submit" id="sendSlipBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition active:scale-98 flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/20">
-          <i data-lucide="send"></i> ផ្ញើវិក្កយបត្រទៅកាន់អេតមីន
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>ផ្ញើវិក្កយបត្រទៅកាន់អេតមីន</span>
         </button>
       </form>
     </div>
@@ -163,7 +175,7 @@
 
       document.getElementById('qrMovieNotice').innerText = `រឿង៖ ${movie.title} (${movie.price})`;
       document.getElementById('slipAmount').value = `${price.toFixed(2)}`;
-      document.getElementById('guestKhqrImg').src = localStorage.getItem('angkor_khqr_image') || DEFAULT_QR;
+      document.getElementById('guestKhqrImg').src = DEFAULT_QR;
 
       document.getElementById('qrPayModal').classList.remove('hidden');
       document.getElementById('qrPayModal').classList.add('flex');
@@ -186,7 +198,6 @@
       document.getElementById('qrPayModal').classList.remove('flex');
     }
 
-    // ផ្ញើស្លីបទៅ Telegram Bot
     document.getElementById('slipForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('sendSlipBtn');
@@ -223,7 +234,7 @@
 
         const data = await res.json();
         if (data.ok) {
-          alert('វិក្កយបត្រត្រូវបានផ្ញើជូន Admin ជោគជ័យ! សូមរង់ចាំ Admin ចុចអនុម័ត នោះវីដេអូនឹងចាក់ជូនភ្លាមៗ។');
+          alert('✅ វិក្កយបត្រត្រូវបានផ្ញើជូន Admin ជោគជ័យ! សូមរង់ចាំ Admin ចុចអនុម័ត នោះវីដេអូនឹងចាក់ជូនភ្លាមៗ។');
           closeQrModal();
           document.getElementById('slipForm').reset();
         } else {
@@ -233,12 +244,11 @@
         alert('ផ្ញើបរាជ័យ សូមពិនិត្យអ៊ីនធឺណិត');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="send"></i> ផ្ញើវិក្កយបត្រទៅកាន់អេតមីន`;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> <span>ផ្ញើវិក្កយបត្រទៅកាន់អេតមីន</span>`;
         lucide.createIcons();
       }
     });
 
-    // ត្រួតពិនិត្យ Telegram Polling
     let lastUpdateId = 0;
     async function checkTelegramUpdates() {
       try {
@@ -299,7 +309,6 @@
 
     setInterval(checkTelegramUpdates, 3000);
 
-    // ទាញយកទិន្នន័យពី file movies.json មកបង្ហាញភ្ញៀវ
     async function loadData() {
       try {
         const res = await fetch('movies.json?t=' + Date.now());
@@ -318,21 +327,21 @@
         const hero = allMovies[0];
         document.getElementById('heroSection').innerHTML = `
           <img src="${hero.cover}" class="absolute inset-0 w-full h-full object-cover -z-10 brightness-75" />
-          <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d11] via-[#0d0d11]/40 to-transparent -z-10"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d11] via-[#0d0d11]/50 to-transparent -z-10"></div>
           <div class="max-w-xl">
-            <span class="text-xs bg-amber-500 text-black font-black px-2 py-0.5 rounded uppercase tracking-wider mb-2 inline-block">តម្លៃ៖ ${hero.price}</span>
-            <h1 class="text-3xl font-black mb-4">${hero.title}</h1>
-            <button onclick="handleWatchClick('${hero.id}', 0)" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition active:scale-95">
+            <span class="text-xs bg-amber-500 text-black font-black px-2.5 py-1 rounded-lg uppercase tracking-wider mb-2 inline-block shadow">តម្លៃ៖ ${hero.price}</span>
+            <h1 class="text-3xl font-black mb-4 leading-tight">${hero.title}</h1>
+            <button onclick="handleWatchClick('${hero.id}', 0)" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition active:scale-95 shadow-lg shadow-amber-500/20">
               <i data-lucide="play" class="w-5 h-5 fill-black"></i> ទស្សនាឥឡូវនេះ
             </button>
           </div>
         `;
 
         document.getElementById('moviesRow').innerHTML = allMovies.map(m => `
-          <div onclick="handleWatchClick('${m.id}', 0)" class="min-w-[140px] md:min-w-[170px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
+          <div onclick="handleWatchClick('${m.id}', 0)" class="min-w-[140px] md:min-w-[170px] rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200 shadow-lg">
             <div class="relative">
               <img src="${m.cover}" class="w-full h-48 object-cover" />
-              <span class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">${m.price}</span>
+              <span class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded-lg">${m.price}</span>
             </div>
             <div class="p-3">
               <p class="text-xs font-semibold truncate text-white">${m.title}</p>
