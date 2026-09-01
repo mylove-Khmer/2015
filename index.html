@@ -10,10 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
-    body { 
-      font-family: 'Kantumruy Pro', sans-serif;
-      background-color: #0d0d11; 
-    }
+    body { font-family: 'Kantumruy Pro', sans-serif; background-color: #0d0d11; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
@@ -68,7 +65,7 @@
     </div>
   </div>
 
-  <!-- Modal ស្កេន KHQR (កាតពេញគែម) -->
+  <!-- Modal ស្កេន KHQR -->
   <div id="qrPayModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4 overflow-y-auto">
     <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 md:p-7 max-w-md w-full relative shadow-2xl text-center my-auto">
       <button onclick="closeQrModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white bg-neutral-800 p-1.5 rounded-full">
@@ -76,7 +73,7 @@
       </button>
 
       <h3 class="text-lg font-black text-white mb-1">ស្កេន KHQR ដើម្បីទស្សនា</h3>
-      <p id="qrMovieNotice" class="text-xs text-amber-400 mb-1 font-semibold">រឿង៖ បណ្តាសាក្រៅ ២ ($2.50)</p>
+      <p id="qrMovieNotice" class="text-xs text-amber-400 mb-1 font-semibold">រឿង៖ ($2.50)</p>
       <p class="text-[11px] text-neutral-400 mb-4">លោកអ្នកមិនទាន់បានបង់ប្រាក់ទស្សនារឿងនេះទេ។ សូមស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់៖</p>
 
       <div class="inline-block mb-4 max-w-[280px] md:max-w-[310px] w-full shadow-2xl rounded-2xl overflow-hidden border border-neutral-800">
@@ -107,16 +104,16 @@
     const TELEGRAM_BOT_TOKEN = "8870525233:AAEMYx2LPfOTgc5CZoC8Q2wVhvIxKeXjt00";
     const TELEGRAM_CHAT_ID = "5915683588";
     const DEFAULT_QR = "khqr.png";
-    const DB_ENDPOINT = "https://angkor-dc-stream-default-rtdb.firebaseio.com/movies.json";
+    const DB_ENDPOINT = "https://kvdb.io/4y9hN7hG6zZ7k6b3W8r1M5/angkor_movies";
 
     const defaultMovies = [
       {
-        id: "1",
-        title: "បណ្តាសាក្រៅ ២",
-        price: "$2.50",
-        cover: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80",
+        id: "1788290203964",
+        title: "ចុចខាងក្រោមដើម្បីមើល",
+        price: "$3.00",
+        cover: "https://res.cloudinary.com/slntwp4h/image/upload/v1788290200/r1qciu7hh8htejj4kw5r.jpg",
         episodes: [
-          { epTitle: "ភាគ ១", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" }
+          { epTitle: "ភាគ ១", videoUrl: "https://res.cloudinary.com/slntwp4h/video/upload/v1788290202/kuzl8kl8mkiazw5fl0vc.mp4" }
         ]
       }
     ];
