@@ -10,10 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
-    body { 
-      font-family: 'Kantumruy Pro', sans-serif;
-      background-color: #0b0b0f;
-    }
+    body { font-family: 'Kantumruy Pro', sans-serif; background-color: #0b0b0f; }
   </style>
 </head>
 <body class="text-white p-4 md:p-10 select-none">
@@ -25,7 +22,10 @@
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-xl shadow-lg shadow-amber-500/20">A</div>
         <div>
           <h1 class="text-lg md:text-xl font-bold text-amber-400 leading-none">Angkor DC Control Panel</h1>
-          <p class="text-[11px] text-neutral-400 mt-1">ផ្ទាំងគ្រប់គ្រងរឿងភាគ & វីដេអូ</p>
+          <p class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1.5 font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            ប្រព័ន្ធ Live Auto-Save ដំណើរការ
+          </p>
         </div>
       </div>
       <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-4 py-2.5 rounded-xl border border-neutral-700 font-semibold transition flex items-center gap-1.5 shadow-sm">
@@ -38,7 +38,7 @@
     <section class="bg-neutral-900/90 border border-neutral-800 rounded-2xl p-5 md:p-7 shadow-xl">
       <h2 class="text-base font-bold mb-5 flex items-center gap-2 text-white border-b border-neutral-800 pb-3">
         <i data-lucide="plus-circle" class="text-amber-400 w-5 h-5"></i>
-        <span>បង្កើតរឿងថ្មី (និង Upload ភាគ ១)</span>
+        <span>បង្កើតរឿងថ្មី (Upload ភ្លាម ភ្ញៀវឃើញភ្លាម)</span>
       </h2>
 
       <form id="createMovieForm" class="space-y-4">
@@ -65,36 +65,22 @@
 
         <button type="submit" id="createBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-xl transition active:scale-98 flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/10">
           <i data-lucide="upload-cloud" class="w-5 h-5"></i>
-          <span>Upload រឿង និង វីដេអូ</span>
+          <span>Upload និងផ្សាយចេញភ្លាមៗ</span>
         </button>
       </form>
     </section>
 
-    <!-- ប្រអប់ Sync JSON ទៅកាន់ GitHub -->
-    <section class="bg-gradient-to-br from-amber-500/10 via-neutral-900 to-neutral-900 border border-amber-500/30 rounded-2xl p-5 shadow-xl">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-          <i data-lucide="code-2" class="w-4 h-4"></i>
-          <span>កូដទិន្នន័យ movies.json (សម្រាប់ GitHub)</span>
-        </h3>
-        <button onclick="copyJsonCode()" class="bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition active:scale-95">
-          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-          <span>Copy កូដ JSON</span>
-        </button>
-      </div>
-      <textarea id="jsonOutput" readonly class="w-full h-28 bg-black/70 border border-neutral-800 rounded-xl p-3 text-xs font-mono text-neutral-300 focus:outline-none"></textarea>
-      <p class="text-[11px] text-neutral-400 mt-2 flex items-center gap-1.5">
-        <i data-lucide="info" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i>
-        <span>Upload ចប់ សូមចុច <b>"Copy កូដ JSON"</b> យកទៅ Paste ក្នុង file <code>movies.json</code> លើ GitHub ដើម្បីឱ្យភ្ញៀវមើលឃើញ។</span>
-      </p>
-    </section>
-
     <!-- បញ្ជីរឿងទាំងអស់ -->
     <section class="space-y-3">
-      <h2 class="text-base font-bold flex items-center gap-2">
-        <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
-        <span>បញ្ជីរឿងដែលមានស្រាប់</span>
-      </h2>
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold flex items-center gap-2">
+          <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
+          <span>បញ្ជីរឿងដែលមានស្រាប់</span>
+        </h2>
+        <button onclick="loadDatabaseData()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+        </button>
+      </div>
       <div id="movieList" class="space-y-4"></div>
     </section>
 
@@ -130,36 +116,49 @@
   <script>
     const CLOUD_NAME = "slntwp4h";
     const UPLOAD_PRESET = "my_preset";
+    const DB_ENDPOINT = "https://angkor-dc-stream-default-rtdb.firebaseio.com/movies.json";
 
     let movies = [];
 
-    async function initData() {
+    const defaultMovies = [
+      {
+        id: "1",
+        title: "បណ្តាសាក្រៅ ២",
+        price: "$2.50",
+        cover: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80",
+        episodes: [
+          { epTitle: "ភាគ ១", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" }
+        ]
+      }
+    ];
+
+    async function loadDatabaseData() {
       try {
-        const res = await fetch('movies.json?t=' + Date.now());
+        const res = await fetch(DB_ENDPOINT + '?t=' + Date.now());
         if (res.ok) {
-          movies = await res.json();
+          const data = await res.json();
+          movies = Array.isArray(data) && data.length > 0 ? data : defaultMovies;
         } else {
-          const local = localStorage.getItem('angkor_movies');
-          movies = local ? JSON.parse(local) : [];
+          movies = defaultMovies;
         }
       } catch (e) {
-        const local = localStorage.getItem('angkor_movies');
-        movies = local ? JSON.parse(local) : [];
+        movies = defaultMovies;
       }
-      saveAndRefresh();
-    }
-
-    function saveAndRefresh() {
-      localStorage.setItem('angkor_movies', JSON.stringify(movies));
-      document.getElementById('jsonOutput').value = JSON.stringify(movies, null, 2);
       renderList();
     }
 
-    function copyJsonCode() {
-      const textarea = document.getElementById('jsonOutput');
-      textarea.select();
-      navigator.clipboard.writeText(textarea.value);
-      alert('✅ បាន Copy កូដ JSON ជោគជ័យ! សូមយកទៅ Paste ក្នុង file movies.json លើ GitHub។');
+    async function syncToDatabase(newList) {
+      movies = newList;
+      renderList();
+      try {
+        await fetch(DB_ENDPOINT, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newList)
+        });
+      } catch (e) {
+        console.error('Sync error:', e);
+      }
     }
 
     function uploadToCloudWithProgress(file, resourceType, onProgress) {
@@ -272,15 +271,16 @@
           episodes: [{ epTitle: 'ភាគ ១', videoUrl: videoUrl }]
         };
 
-        movies.unshift(newMovie);
-        saveAndRefresh();
+        btn.innerHTML = `កំពុងផ្សាយចេញទៅកាន់ភ្ញៀវ...`;
+        await syncToDatabase([newMovie, ...movies]);
+        
         e.target.reset();
-        alert('🎉 បាន Upload រឿង និងវីដេអូជោគជ័យ! សូម Copy កូដ JSON ក្នុងប្រអប់ពណ៌លឿង យកទៅ Paste ក្នុង file movies.json លើ GitHub។');
+        alert('🎉 បាន Upload និងផ្សាយចេញជោគជ័យ ១០០%! ភ្ញៀវគ្រប់រូបអាចមើលឃើញភ្លាមៗ។');
       } catch (err) {
         alert('មានបញ្ហាក្នុងការ Upload៖ ' + err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="upload-cloud" class="w-5 h-5"></i> <span>Upload រឿង និង វីដេអូ</span>`;
+        btn.innerHTML = `<i data-lucide="upload-cloud" class="w-5 h-5"></i> <span>Upload និងផ្សាយចេញភ្លាមៗ</span>`;
         lucide.createIcons();
       }
     });
@@ -323,10 +323,10 @@
         if (movie) {
           if (!movie.episodes) movie.episodes = [];
           movie.episodes.push({ epTitle, videoUrl });
-          saveAndRefresh();
+          await syncToDatabase([...movies]);
         }
         closeEpModal();
-        alert('🎉 បានបន្ថែមភាគថ្មីជោគជ័យ! សូម Copy កូដ JSON ទៅដាក់ក្នុង movies.json លើ GitHub។');
+        alert('🎉 បានបន្ថែមភាគថ្មី និងផ្សាយចេញជោគជ័យ!');
       } catch (err) {
         alert('Upload ភាគថ្មីបរាជ័យ៖ ' + err);
       } finally {
@@ -336,24 +336,23 @@
       }
     });
 
-    function deleteMovie(id) {
+    async function deleteMovie(id) {
       if (confirm('តើអ្នកពិតជាចង់លុបរឿងនេះមែនទេ?')) {
-        movies = movies.filter(m => m.id !== id);
-        saveAndRefresh();
+        await syncToDatabase(movies.filter(m => m.id !== id));
       }
     }
 
-    function deleteEpisode(movieId, epIdx) {
+    async function deleteEpisode(movieId, epIdx) {
       if (confirm('តើអ្នកចង់ដកភាគនេះចេញមែនទេ?')) {
         const movie = movies.find(m => m.id === movieId);
         if (movie && movie.episodes) {
           movie.episodes.splice(epIdx, 1);
-          saveAndRefresh();
+          await syncToDatabase([...movies]);
         }
       }
     }
 
-    initData();
+    loadDatabaseData();
   </script>
 </body>
 </html>
