@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angkor DC Clone</title>
+  <!-- Tailwind CSS សម្រាប់ UI -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-color: #0d0d11;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    /* Hide scrollbar for smooth horizontal scrolling */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="text-white pb-24 md:pb-8 select-none">
+
+  <!-- ១. Header / Navbar -->
+  <header class="fixed top-0 inset-x-0 h-16 bg-black/60 backdrop-blur-md z-40 flex items-center justify-between px-6 border-b border-white/5">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">
+        A
+      </div>
+      <span class="text-xl font-bold tracking-tight">Angkor DC</span>
+    </div>
+    <div class="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center cursor-pointer hover:border-amber-500 transition">
+      <i data-lucide="user" class="w-5 h-5 text-neutral-300"></i>
+    </div>
+  </header>
+
+  <!-- ២. Hero Featured Movie -->
+  <section class="relative h-[72vh] flex flex-col justify-end px-6 md:px-12 pb-8">
+    <img 
+      src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80" 
+      alt="Hero Cover" 
+      class="absolute inset-0 w-full h-full object-cover -z-10 brightness-75"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d11] via-[#0d0d11]/40 to-transparent -z-10"></div>
+
+    <div class="max-w-xl">
+      <span class="text-xs font-bold uppercase tracking-widest text-amber-400 mb-1 inline-block">HORROR / រន្ធត់</span>
+      <h1 class="text-3xl md:text-5xl font-black tracking-tight mb-6">បណ្តាសាក្រៅ ២</h1>
+
+      <!-- Buttons -->
+      <div class="flex gap-4">
+        <button 
+          onclick="openPlayer('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')"
+          class="flex-1 md:flex-initial md:px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl flex items-center justify-center gap-2 transition active:scale-95 shadow-lg shadow-amber-500/20"
+        >
+          <i data-lucide="play" class="w-5 h-5 fill-black"></i> Play Now
+        </button>
+        <button class="flex-1 md:flex-initial md:px-8 py-3.5 bg-neutral-800/80 hover:bg-neutral-700 border border-neutral-700 font-bold rounded-xl flex items-center justify-center gap-2 transition active:scale-95">
+          <i data-lucide="download" class="w-5 h-5"></i> Download
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ៣. Movie Categories / Row Lists -->
+  <section class="px-6 md:px-12 mt-4">
+    <h2 class="text-lg md:text-xl font-bold mb-4">ភាពយន្តពេញនិយម</h2>
+    
+    <div class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+      <!-- Movie Item 1 -->
+      <div onclick="openPlayer('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4')" class="min-w-[140px] md:min-w-[180px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80" class="w-full h-48 md:h-60 object-cover" />
+        <div class="p-3">
+          <p class="text-sm font-semibold truncate">ស្នេហា Private</p>
+        </div>
+      </div>
+
+      <!-- Movie Item 2 -->
+      <div onclick="openPlayer('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4')" class="min-w-[140px] md:min-w-[180px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
+        <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=400&q=80" class="w-full h-48 md:h-60 object-cover" />
+        <div class="p-3">
+          <p class="text-sm font-semibold truncate">វិញ្ញាណ និងលោកិយ</p>
+        </div>
+      </div>
+
+      <!-- Movie Item 3 -->
+      <div onclick="openPlayer('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4')" class="min-w-[140px] md:min-w-[180px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
+        <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80" class="w-full h-48 md:h-60 object-cover" />
+        <div class="p-3">
+          <p class="text-sm font-semibold truncate">រឿងខ្មោចភាគពិសេស</p>
+        </div>
+      </div>
+
+      <!-- Movie Item 4 -->
+      <div onclick="openPlayer('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4')" class="min-w-[140px] md:min-w-[180px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
+        <img src="https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=400&q=80" class="w-full h-48 md:h-60 object-cover" />
+        <div class="p-3">
+          <p class="text-sm font-semibold truncate">ដំណើរផ្សងព្រេង ២០២៦</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ៤. Bottom Mobile Navigation -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-[#0d0d11]/95 border-t border-neutral-800 backdrop-blur-md flex justify-around py-3 z-40 text-neutral-400 text-xs">
+    <div class="flex flex-col items-center gap-1 text-amber-500 cursor-pointer">
+      <i data-lucide="home" class="w-5 h-5"></i>
+      <span>Home</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
+      <i data-lucide="search" class="w-5 h-5"></i>
+      <span>Search</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
+      <i data-lucide="bell" class="w-5 h-5"></i>
+      <span>Notifications</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
+      <i data-lucide="film" class="w-5 h-5"></i>
+      <span>Library</span>
+    </div>
+  </nav>
+
+  <!-- ៥. Video Player Modal Popup -->
+  <div id="videoModal" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-center p-4">
+    <div class="w-full max-w-4xl relative">
+      <button onclick="closePlayer()" class="absolute -top-10 right-0 text-neutral-400 hover:text-white flex items-center gap-1 font-bold text-sm">
+        <i data-lucide="x" class="w-6 h-6"></i> បិទ
+      </button>
+      <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800">
+        <video id="mainVideo" controls class="w-full aspect-video">
+          <source src="" type="video/mp4">
+          Browser របស់អ្នកមិនគាំទ្រការចាក់វីដេអូនេះទេ។
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript សម្រាប់ដំណើរការ Icons និង Video Popup -->
+  <script>
+    // បើកដំណើរការ Lucide Icons
+    lucide.createIcons();
+
+    const modal = document.getElementById('videoModal');
+    const video = document.getElementById('mainVideo');
+
+    function openPlayer(url) {
+      video.src = url;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      video.play();
+    }
+
+    function closePlayer() {
+      video.pause();
+      video.src = '';
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  </script>
+</body>
+</html>
