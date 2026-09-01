@@ -3,144 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Angkor DC - Movie Stream</title>
+  <title>Angkor DC - Admin Panel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    body { background-color: #0d0d11; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+  <style>body { background-color: #0b0b0e; }</style>
 </head>
-<body class="text-white pb-24 select-none font-sans">
+<body class="text-white p-4 md:p-10 font-sans">
+  <div class="max-w-3xl mx-auto">
+    
+    <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
+      <h1 class="text-xl md:text-2xl font-black text-amber-400 flex items-center gap-2">
+        <i data-lucide="shield-check"></i> Admin (ដាក់វីដេអូសម្រាប់ Phone & PC)
+      </h1>
+      <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg border border-neutral-700">
+        ទំព័រភ្ញៀវ ↗
+      </a>
+    </div>
 
-  <!-- Navbar (ដកពាក្យ Admin ចេញ ជំនួសដោយរូប Profile ដូច Angkor DC) -->
-  <header class="fixed top-0 inset-x-0 h-16 bg-black/60 backdrop-blur-md z-40 flex items-center justify-between px-6 border-b border-white/5">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">A</div>
-      <span class="text-xl font-bold tracking-tight">Angkor DC</span>
-    </div>
-    <div class="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center cursor-pointer hover:border-amber-500 transition">
-      <i data-lucide="user" class="w-5 h-5 text-neutral-300"></i>
-    </div>
-  </header>
+    <!-- Form បញ្ចូល -->
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 mb-8 shadow-xl">
+      <h2 class="text-base font-bold mb-4 flex items-center gap-2 text-white">
+        <i data-lucide="plus-circle" class="text-amber-400"></i> បញ្ចូលរឿងថ្មី
+      </h2>
+      <form id="movieForm" class="space-y-4">
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង (ជាភាសាខ្មែរ)</label>
+          <input type="text" id="title" required placeholder="ឧ. បណ្តាសាក្រៅ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+        </div>
 
-  <!-- Hero Section -->
-  <div id="heroSection" class="relative h-[68vh] flex flex-col justify-end px-6 pb-8">
-    <!-- Rendered by JS -->
-  </div>
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">តម្លៃ ($)</label>
+          <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+        </div>
 
-  <!-- Movie List Carousel -->
-  <section class="px-6 mt-4">
-    <h2 class="text-lg font-bold mb-4">ភាពយន្តទាំងអស់</h2>
-    <div id="moviesRow" class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
-      <!-- Rendered by JS -->
-    </div>
-  </section>
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">Link រូបភាព Poster (URL)</label>
+          <input type="url" id="cover" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+        </div>
 
-  <!-- Bottom Navigation Bar -->
-  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-[#0d0d11]/95 border-t border-neutral-800 backdrop-blur-md flex justify-around py-3 z-40 text-neutral-400 text-xs">
-    <div class="flex flex-col items-center gap-1 text-amber-500 cursor-pointer">
-      <i data-lucide="home" class="w-5 h-5"></i>
-      <span>Home</span>
-    </div>
-    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
-      <i data-lucide="search" class="w-5 h-5"></i>
-      <span>Search</span>
-    </div>
-    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
-      <i data-lucide="bell" class="w-5 h-5"></i>
-      <span>Notifications</span>
-    </div>
-    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
-      <i data-lucide="film" class="w-5 h-5"></i>
-      <span>Library</span>
-    </div>
-  </nav>
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">Link វីដេអូ (.mp4 URL)</label>
+          <input type="url" id="videoUrl" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+          <p class="text-[11px] text-neutral-500 mt-1">ឧទាហរណ៍៖ https://mylove-khmer.github.io/2015/video1.mp4</p>
+        </div>
 
-  <!-- Video Player Modal -->
-  <div id="videoModal" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-center p-4">
-    <div class="w-full max-w-4xl relative">
-      <button onclick="closePlayer()" class="absolute -top-10 right-0 text-neutral-400 hover:text-white flex items-center gap-1 font-bold text-sm">
-        <i data-lucide="x" class="w-6 h-6"></i> បិទ
-      </button>
-      <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800">
-        <video id="mainVideo" controls playsinline class="w-full aspect-video">
-          <source id="videoSource" src="" type="video/mp4">
-        </video>
-      </div>
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
+          <i data-lucide="upload-cloud"></i> រក្សាទុក និងដាក់ឱ្យមើល
+        </button>
+      </form>
     </div>
+
+    <!-- បញ្ជីវីដេអូ -->
+    <h2 class="text-base font-bold mb-3">បញ្ជីភាពយន្ត</h2>
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
+      <div id="movieTable" class="divide-y divide-neutral-800"></div>
+    </div>
+
   </div>
 
   <script>
     const defaultMovies = [
-      { 
-        id: '1', 
-        title: 'បណ្តាសាក្រៅ ២', 
-        price: '$2.50', 
-        cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80', 
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' 
-      }
+      { id: '1', title: 'បណ្តាសាក្រៅ ២', price: '$2.50', cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
     ];
 
-    function loadData() {
+    function getMovies() {
       const data = localStorage.getItem('angkor_movies');
-      const movies = data ? JSON.parse(data) : defaultMovies;
+      return data ? JSON.parse(data) : defaultMovies;
+    }
 
-      if (movies.length > 0) {
-        const hero = movies[0];
-        document.getElementById('heroSection').innerHTML = `
-          <img src="${hero.cover}" class="absolute inset-0 w-full h-full object-cover -z-10 brightness-75" />
-          <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d11] via-[#0d0d11]/40 to-transparent -z-10"></div>
-          <div class="max-w-xl">
-            <span class="text-xs bg-amber-500 text-black font-black px-2 py-0.5 rounded uppercase tracking-wider mb-2 inline-block">តម្លៃ៖ ${hero.price}</span>
-            <h1 class="text-3xl font-black mb-4">${hero.title}</h1>
-            <button onclick="openPlayer('${hero.videoUrl}')" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2">
-              <i data-lucide="play" class="w-5 h-5 fill-black"></i> Play Now
-            </button>
-          </div>
-        `;
+    function saveMovies(movies) {
+      localStorage.setItem('angkor_movies', JSON.stringify(movies));
+      renderList();
+    }
 
-        document.getElementById('moviesRow').innerHTML = movies.map(m => `
-          <div onclick="openPlayer('${m.videoUrl}')" class="min-w-[140px] md:min-w-[170px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
-            <div class="relative">
-              <img src="${m.cover}" class="w-full h-48 object-cover" />
-              <span class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">${m.price}</span>
-            </div>
-            <div class="p-3">
-              <p class="text-xs font-semibold truncate text-white">${m.title}</p>
-            </div>
-          </div>
-        `).join('');
-      } else {
-        document.getElementById('heroSection').innerHTML = `<p class="text-center text-neutral-500">មិនទាន់មានវីដេអូសម្រាប់ចាក់នៅឡើយទេ។</p>`;
-        document.getElementById('moviesRow').innerHTML = '';
+    function renderList() {
+      const list = getMovies();
+      const container = document.getElementById('movieTable');
+      if (list.length === 0) {
+        container.innerHTML = `<p class="p-6 text-center text-neutral-500 text-sm">មិនទាន់មានវីដេអូទេ។</p>`;
+        return;
       }
+      container.innerHTML = list.map(m => `
+        <div class="flex items-center justify-between p-4 hover:bg-neutral-800/40 transition">
+          <div class="flex items-center gap-3">
+            <img src="${m.cover}" class="w-12 h-16 object-cover rounded-lg bg-neutral-800" />
+            <div>
+              <p class="font-bold text-sm text-white">${m.title}</p>
+              <span class="inline-block mt-1 text-xs bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/20">${m.price}</span>
+            </div>
+          </div>
+          <button onclick="deleteMovie('${m.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> ដកចេញ
+          </button>
+        </div>
+      `).join('');
       lucide.createIcons();
     }
 
-    const modal = document.getElementById('videoModal');
-    const video = document.getElementById('mainVideo');
-    const videoSource = document.getElementById('videoSource');
-
-    function openPlayer(url) {
-      if (!url) return;
-      videoSource.src = url;
-      video.load();
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      video.play().catch(e => console.log('Autoplay prevent:', e));
+    function deleteMovie(id) {
+      if (confirm('តើអ្នកចង់ដកវីដេអូនេះចោលមែនទេ?')) {
+        const list = getMovies().filter(m => m.id !== id);
+        saveMovies(list);
+      }
     }
 
-    function closePlayer() {
-      video.pause();
-      videoSource.src = '';
-      video.load();
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
+    document.getElementById('movieForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const list = getMovies();
+      const newMovie = {
+        id: Date.now().toString(),
+        title: document.getElementById('title').value,
+        price: document.getElementById('price').value,
+        cover: document.getElementById('cover').value,
+        videoUrl: document.getElementById('videoUrl').value
+      };
+      list.unshift(newMovie);
+      saveMovies(list);
+      e.target.reset();
+      alert('បានដាក់បញ្ចាំងវីដេអូជោគជ័យ!');
+    });
 
-    loadData();
+    renderList();
   </script>
 </body>
 </html>
