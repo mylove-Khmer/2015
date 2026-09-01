@@ -18,6 +18,8 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body class="text-white pb-24 select-none">
 
@@ -51,7 +53,7 @@
     <div id="moviesRow" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
   </section>
 
-  <!-- Auth Modal (Registration Form) -->
+  <!-- Auth Modal (Registration) -->
   <div id="authModal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 hidden items-center justify-center p-4">
     <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl relative">
       <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -95,11 +97,8 @@
         </button>
       </div>
 
-      <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 mb-5 aspect-video flex items-center justify-center">
-        <video id="mainVideo" controls playsinline controlsList="nodownload" class="w-full h-full object-contain">
-          <source id="videoSource" src="" type="video/mp4">
-        </video>
-      </div>
+      <!-- Player Wrapper -->
+      <div id="playerFrameWrapper" class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 mb-5 aspect-video flex items-center justify-center"></div>
 
       <!-- Episodes List -->
       <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-6 mb-8">
@@ -167,8 +166,15 @@
     let selectedMovieToPay = null;
     let currentMovie = null;
     let currentEpIndex = 0;
+    let ytPlayer = null;
 
-    // ពិនិត្យការចុះឈ្មោះរបស់ភ្ញៀវ
+    function getYouTubeId(url) {
+      if (!url) return null;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
+
     function checkUserRegistration() {
       const userProfile = localStorage.getItem('guest_user_profile');
       if (!userProfile) {
@@ -230,7 +236,6 @@
       return localStorage.getItem('guest_user_id') || 'GUEST';
     }
 
-    // សិទ្ធិទស្សនា & គោលការណ៍មើល ១ ដងគត់
     function getPurchasedMovies() {
       const p = localStorage.getItem(`unlocked_${getUserId()}`);
       return p ? JSON.parse(p) : [];
@@ -251,9 +256,13 @@
     }
 
     function isMovieUnlocked(movie) {
-      const priceStr = (movie.price || '').toLowerCase().replace('$', '').trim();
-      const priceNum = parseFloat(priceStr);
-      if (priceStr === 'free' || priceNum === 0) return true;
+      if (!movie || !movie.price) return false;
+      const priceClean = movie.price.toString().replace(/[^0-9.]/g, '').trim();
+      const priceNum = parseFloat(priceClean);
+
+      if (movie.price.toString().toLowerCase().trim() === 'free' || priceNum === 0) {
+        return true;
+      }
       return getPurchasedMovies().includes(movie.id);
     }
 
@@ -292,7 +301,6 @@
       document.getElementById('qrPayModal').classList.remove('flex');
     }
 
-    // បញ្ជូនរូបថត Slip ទៅ Telegram
     document.getElementById('slipForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('sendSlipBtn');
@@ -352,7 +360,6 @@
       }
     });
 
-    // ពិនិត្យការអនុម័តពី Telegram Bot Real-time
     let lastUpdateId = 0;
     async function checkTelegramUpdates() {
       try {
@@ -407,7 +414,6 @@
     }
     setInterval(checkTelegramUpdates, 3000);
 
-    // ទាញរឿងពី Firestore Realtime
     db.collection("movies").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
       allMovies = [];
       snapshot.forEach(doc => allMovies.push({ id: doc.id, ...doc.data() }));
@@ -457,10 +463,8 @@
       lucide.createIcons();
     });
 
-    // គ្រប់គ្រងការចាក់វីដេអូ
     const modal = document.getElementById('videoModal');
-    const mainVideo = document.getElementById('mainVideo');
-    const videoSource = document.getElementById('videoSource');
+    const wrapper = document.getElementById('playerFrameWrapper');
 
     function openPlayer(movieId, epIndex = 0) {
       currentMovie = allMovies.find(m => m.id === movieId);
@@ -489,28 +493,59 @@
 
       currentEpIndex = index;
       const ep = currentMovie.episodes[index];
-      if (!ep) return;
+      if (!ep || !ep.videoUrl) return;
 
       document.getElementById('playerMovieTitle').innerText = `${currentMovie.title} - ${ep.epTitle}`;
-      videoSource.src = ep.videoUrl;
-      mainVideo.load();
-      mainVideo.play().catch(e => console.log('Auto play prevention:', e));
+      const ytId = getYouTubeId(ep.videoUrl);
+
+      wrapper.innerHTML = '';
+
+      if (ytId) {
+        wrapper.innerHTML = `<div id="ytContainer" class="w-full h-full"></div>`;
+        ytPlayer = new YT.Player('ytContainer', {
+          height: '100%',
+          width: '100%',
+          videoId: ytId,
+          playerVars: {
+            'autoplay': 1,
+            'rel': 0,
+            'modestbranding': 1
+          },
+          events: {
+            'onStateChange': onYouTubeStateChange
+          }
+        });
+      } else {
+        wrapper.innerHTML = `
+          <video id="nativeVideo" controls autoplay playsinline controlsList="nodownload" class="w-full h-full object-contain">
+            <source src="${ep.videoUrl}" type="video/mp4">
+          </video>
+        `;
+        const v = document.getElementById('nativeVideo');
+        v.onended = handleVideoEnd;
+      }
 
       renderEpisodesList();
     }
 
-    // ចាក់ចប់ Lock រឿងវិញភ្លាម (One-Time Watch Policy)
-    mainVideo.onended = () => {
+    function onYouTubeStateChange(event) {
+      // 0 = Ended (ពេលមើលចប់)
+      if (event.data === 0) {
+        handleVideoEnd();
+      }
+    }
+
+    function handleVideoEnd() {
       if (currentMovie) {
         if (currentEpIndex + 1 < currentMovie.episodes.length) {
           playEpisode(currentEpIndex + 1);
         } else {
           lockMovieAfterWatch(currentMovie.id);
           closePlayer();
-          alert('🔒 លោកអ្នកបានទស្សនារឿងនេះចប់សព្វគ្រប់ហើយ! សំបុត្រទស្សនា ១ ដងត្រូវបានបញ្ចប់។ បើចង់ទស្សនាសារឡើងវិញ សូមធ្វើការទូទាត់ប្រាក់ម្តងទៀត។ អរគុណ!');
+          alert('🔒 លោកអ្នកបានទស្សនារឿងនេះចប់សព្វគ្រប់ ១ ដងហើយ! បើចង់ទស្សនាសារឡើងវិញ សូមធ្វើការទូទាត់ប្រាក់ម្តងទៀត។ អរគុណ!');
         }
       }
-    };
+    }
 
     function renderEpisodesList() {
       const container = document.getElementById('episodesListContainer');
@@ -531,8 +566,7 @@
     }
 
     function closePlayer() {
-      mainVideo.pause();
-      videoSource.src = '';
+      wrapper.innerHTML = '';
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
