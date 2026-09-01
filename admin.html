@@ -8,25 +8,24 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>body { background-color: #0b0b0e; }</style>
 </head>
-<body class="text-white p-6 md:p-12 font-sans">
-  <div class="max-w-4xl mx-auto">
+<body class="text-white p-4 md:p-10 font-sans">
+  <div class="max-w-3xl mx-auto">
     
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-8 border-b border-neutral-800 pb-4">
-      <h1 class="text-2xl font-black text-amber-400 flex items-center gap-2">
-        <i data-lucide="shield-alert"></i> Admin Dashboard (គ្រប់គ្រងវីដេអូ)
+    <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
+      <h1 class="text-xl md:text-2xl font-black text-amber-400 flex items-center gap-2">
+        <i data-lucide="shield-check"></i> Admin (ដាក់វីដេអូសម្រាប់ Phone & PC)
       </h1>
-      <a href="index.html" target="_blank" class="text-sm bg-neutral-800 hover:bg-neutral-700 px-4 py-2 rounded-lg border border-neutral-700">
-        មើលទំព័រភ្ញៀវ ↗
+      <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg border border-neutral-700">
+        ទំព័រភ្ញៀវ ↗
       </a>
     </div>
 
-    <!-- Form បញ្ចូលវីដេអូ -->
-    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 mb-10 shadow-xl">
-      <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-white">
-        <i data-lucide="plus-circle" class="text-amber-400"></i> បញ្ចូលវីដេអូថ្មី
+    <!-- Form បញ្ចូល -->
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 mb-8 shadow-xl">
+      <h2 class="text-base font-bold mb-4 flex items-center gap-2 text-white">
+        <i data-lucide="plus-circle" class="text-amber-400"></i> បញ្ចូលរឿងថ្មី
       </h2>
-      <form id="movieForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form id="movieForm" class="space-y-4">
         <div>
           <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង (ជាភាសាខ្មែរ)</label>
           <input type="text" id="title" required placeholder="ឧ. បណ្តាសាក្រៅ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
@@ -37,32 +36,27 @@
           <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
         </div>
 
-        <!-- ប៊ូតុងរើសរូបភាព Cover -->
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">ជ្រើសរើសរូបភាព Cover (Poster Image)</label>
-          <input type="file" id="coverFile" accept="image/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-black hover:file:bg-amber-400 cursor-pointer">
+          <label class="text-xs text-neutral-400 block mb-1">Link រូបភាព Poster (URL)</label>
+          <input type="url" id="cover" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
         </div>
 
-        <!-- ប៊ូតុងរើស File វីដេអូ -->
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">ជ្រើសរើសឯកសារវីដេអូ (Video File .mp4)</label>
-          <input type="file" id="videoFile" accept="video/mp4,video/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-black hover:file:bg-amber-400 cursor-pointer">
+          <label class="text-xs text-neutral-400 block mb-1">Link វីដេអូ (.mp4 URL)</label>
+          <input type="url" id="videoUrl" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+          <p class="text-[11px] text-neutral-500 mt-1">ឧទាហរណ៍៖ https://mylove-khmer.github.io/2015/video1.mp4</p>
         </div>
 
-        <div class="md:col-span-2 mt-2">
-          <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
-            <i data-lucide="upload-cloud"></i> រក្សាទុក និងដាក់បង្ហាញលើ Website
-          </button>
-        </div>
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
+          <i data-lucide="upload-cloud"></i> រក្សាទុក និងដាក់ឱ្យមើល
+        </button>
       </form>
     </div>
 
-    <!-- តារាងបញ្ជីភាពយន្ត និងប៊ូតុងលុប -->
-    <h2 class="text-lg font-bold mb-4">បញ្ជីភាពយន្តកំពុងដំណើរការ</h2>
+    <!-- បញ្ជីវីដេអូ -->
+    <h2 class="text-base font-bold mb-3">បញ្ជីភាពយន្ត</h2>
     <div class="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
-      <div id="movieTable" class="divide-y divide-neutral-800">
-        <!-- Rendered by JS -->
-      </div>
+      <div id="movieTable" class="divide-y divide-neutral-800"></div>
     </div>
 
   </div>
@@ -86,19 +80,19 @@
       const list = getMovies();
       const container = document.getElementById('movieTable');
       if (list.length === 0) {
-        container.innerHTML = `<p class="p-6 text-center text-neutral-500 text-sm">មិនទាន់មានវីដេអូនៅឡើយទេ។</p>`;
+        container.innerHTML = `<p class="p-6 text-center text-neutral-500 text-sm">មិនទាន់មានវីដេអូទេ។</p>`;
         return;
       }
       container.innerHTML = list.map(m => `
         <div class="flex items-center justify-between p-4 hover:bg-neutral-800/40 transition">
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
             <img src="${m.cover}" class="w-12 h-16 object-cover rounded-lg bg-neutral-800" />
             <div>
               <p class="font-bold text-sm text-white">${m.title}</p>
               <span class="inline-block mt-1 text-xs bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/20">${m.price}</span>
             </div>
           </div>
-          <button onclick="deleteMovie('${m.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1">
+          <button onclick="deleteMovie('${m.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1">
             <i data-lucide="trash-2" class="w-4 h-4"></i> ដកចេញ
           </button>
         </div>
@@ -107,56 +101,26 @@
     }
 
     function deleteMovie(id) {
-      if (confirm('តើអ្នកពិតជាចង់ដកវីដេអូនេះចោលមែនទេ?')) {
+      if (confirm('តើអ្នកចង់ដកវីដេអូនេះចោលមែនទេ?')) {
         const list = getMovies().filter(m => m.id !== id);
         saveMovies(list);
       }
     }
 
-    // Function បំប្លែង File រូបភាពទៅជា Data URL
-    function readFileAsDataURL(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    document.getElementById('movieForm').addEventListener('submit', async (e) => {
+    document.getElementById('movieForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `កំពុងដំណើរការ...`;
-
-      try {
-        const coverFileInput = document.getElementById('coverFile').files[0];
-        const videoFileInput = document.getElementById('videoFile').files[0];
-
-        // អានរូបភាព និងបង្កើត Object URL សម្រាប់វីដេអូ
-        const coverDataUrl = await readFileAsDataURL(coverFileInput);
-        const videoUrl = URL.createObjectURL(videoFileInput);
-
-        const list = getMovies();
-        const newMovie = {
-          id: Date.now().toString(),
-          title: document.getElementById('title').value,
-          price: document.getElementById('price').value,
-          cover: coverDataUrl,
-          videoUrl: videoUrl
-        };
-
-        list.unshift(newMovie);
-        saveMovies(list);
-        e.target.reset();
-        alert('វីដេអូត្រូវបានបញ្ចូលដោយជោគជ័យ!');
-      } catch (error) {
-        alert('មានបញ្ហាក្នុងការបញ្ចូលឯកសារ');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i data-lucide="upload-cloud"></i> រក្សាទុក និងដាក់បង្ហាញលើ Website`;
-        lucide.createIcons();
-      }
+      const list = getMovies();
+      const newMovie = {
+        id: Date.now().toString(),
+        title: document.getElementById('title').value,
+        price: document.getElementById('price').value,
+        cover: document.getElementById('cover').value,
+        videoUrl: document.getElementById('videoUrl').value
+      };
+      list.unshift(newMovie);
+      saveMovies(list);
+      e.target.reset();
+      alert('បានដាក់បញ្ចាំងវីដេអូជោគជ័យ!');
     });
 
     renderList();
