@@ -20,6 +20,7 @@
 </head>
 <body class="text-white pb-24 select-none">
 
+  <!-- Header / Navbar -->
   <header class="fixed top-0 inset-x-0 h-16 bg-black/70 backdrop-blur-md z-40 flex items-center justify-between px-4 md:px-8 border-b border-white/5">
     <div class="flex items-center gap-3">
       <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">A</div>
@@ -30,8 +31,10 @@
     </div>
   </header>
 
+  <!-- Hero Section -->
   <div id="heroSection" class="relative h-[68vh] flex flex-col justify-end px-6 pb-8"></div>
 
+  <!-- Movie Carousel -->
   <section class="px-6 mt-4">
     <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
       <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
@@ -40,6 +43,7 @@
     <div id="moviesRow" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
   </section>
 
+  <!-- Video Player Modal (Clean MP4 Player) -->
   <div id="videoModal" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-start overflow-y-auto p-4 md:p-8">
     <div class="w-full max-w-4xl relative mt-2 md:mt-6">
       <div class="flex items-center justify-between mb-3">
@@ -49,8 +53,14 @@
         </button>
       </div>
 
-      <div id="playerContainer" class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 mb-5 aspect-video flex items-center justify-center"></div>
+      <!-- Player Frame សុទ្ធសាធ គ្មាន Logo គេឡើយ -->
+      <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 mb-5 aspect-video flex items-center justify-center">
+        <video id="mainVideo" controls playsinline class="w-full h-full object-contain">
+          <source id="videoSource" src="" type="video/mp4">
+        </video>
+      </div>
 
+      <!-- Episodes List -->
       <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-6 mb-8">
         <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
           <i data-lucide="list-video" class="w-4 h-4 text-amber-400"></i> ជ្រើសរើសភាគដើម្បីទស្សនា៖
@@ -60,6 +70,7 @@
     </div>
   </div>
 
+  <!-- Modal ស្កេន KHQR -->
   <div id="qrPayModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4 overflow-y-auto">
     <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 md:p-7 max-w-md w-full relative shadow-2xl text-center my-auto">
       <button onclick="closeQrModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white bg-neutral-800 p-1.5 rounded-full">
@@ -74,6 +85,7 @@
         <img id="guestKhqrImg" src="khqr.png" class="w-full h-auto object-contain mx-auto block" />
       </div>
 
+      <!-- Form ផ្ញើ Slip ទៅ Telegram Bot -->
       <form id="slipForm" class="space-y-3 text-left">
         <div>
           <label class="text-xs text-neutral-300 block mb-1 font-medium">តម្លៃត្រូវបង់ ($)៖</label>
@@ -95,7 +107,7 @@
 
   <script>
     // ==========================================
-    // កន្លែងដាក់បញ្ជីរឿងផ្ទាល់ (កែប្រែត្រង់នេះបានភ្លាមៗ)
+    // បញ្ជីរឿង (កែប្រែ ឬបន្ថែម Link វីដេអូ MP4 ត្រង់នេះ)
     // ==========================================
     const allMovies = [
       {
@@ -106,7 +118,8 @@
         episodes: [
           {
             epTitle: "ភាគ ១",
-            videoUrl: "https://www.youtube.com/watch?v=wqDMawHXPPY"
+            // ដាក់ Direct MP4 Link ពី Telegram Bot ឬ Cloudinary ត្រង់នេះ
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
           }
         ]
       },
@@ -124,9 +137,6 @@
       }
     ];
 
-    // ==========================================
-    // ប្រព័ន្ធទូទាត់ & Telegram Bot
-    // ==========================================
     const TELEGRAM_BOT_TOKEN = "8870525233:AAEMYx2LPfOTgc5CZoC8Q2wVhvIxKeXjt00";
     const TELEGRAM_CHAT_ID = "5915683588";
     const DEFAULT_QR = "khqr.png";
@@ -310,7 +320,6 @@
 
     setInterval(checkTelegramUpdates, 3000);
 
-    // បង្ហាញរឿងលើទំព័រមុខ
     function loadData() {
       if (allMovies && allMovies.length > 0) {
         const hero = allMovies[0];
@@ -343,7 +352,8 @@
     }
 
     const modal = document.getElementById('videoModal');
-    const playerContainer = document.getElementById('playerContainer');
+    const mainVideo = document.getElementById('mainVideo');
+    const videoSource = document.getElementById('videoSource');
 
     function openPlayer(movieId, epIndex = 0) {
       currentMovie = allMovies.find(m => m.id === movieId);
@@ -363,12 +373,6 @@
       modal.classList.add('flex');
     }
 
-    function extractYouTubeId(url) {
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-      const match = url.match(regExp);
-      return (match && match[2].length === 11) ? match[2] : null;
-    }
-
     function playEpisode(index) {
       if (!currentMovie || !isMovieUnlocked(currentMovie)) {
         closePlayer();
@@ -381,20 +385,9 @@
       if (!ep) return;
 
       document.getElementById('playerMovieTitle').innerText = `${currentMovie.title} - ${ep.epTitle}`;
-      const url = ep.videoUrl;
-      const ytId = extractYouTubeId(url);
-
-      if (ytId) {
-        playerContainer.innerHTML = `
-          <iframe class="w-full h-full rounded-2xl" src="https://www.youtube.com/embed/${ytId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        `;
-      } else {
-        playerContainer.innerHTML = `
-          <video id="mainVideo" controls autoplay playsinline class="w-full h-full rounded-2xl">
-            <source src="${url}" type="video/mp4">
-          </video>
-        `;
-      }
+      videoSource.src = ep.videoUrl;
+      mainVideo.load();
+      mainVideo.play().catch(e => console.log('Auto play prevention:', e));
 
       renderEpisodesList();
     }
@@ -418,7 +411,8 @@
     }
 
     function closePlayer() {
-      playerContainer.innerHTML = '';
+      mainVideo.pause();
+      videoSource.src = '';
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
