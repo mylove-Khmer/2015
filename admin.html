@@ -28,24 +28,30 @@
       </h2>
       <form id="movieForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង</label>
+          <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង (ជាភាសាខ្មែរ)</label>
           <input type="text" id="title" required placeholder="ឧ. បណ្តាសាក្រៅ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
         </div>
+
         <div>
           <label class="text-xs text-neutral-400 block mb-1">តម្លៃ ($)</label>
           <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
         </div>
+
+        <!-- ប៊ូតុងរើសរូបភាព Cover -->
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">Link រូបភាព Cover (Poster URL)</label>
-          <input type="url" id="cover" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+          <label class="text-xs text-neutral-400 block mb-1">ជ្រើសរើសរូបភាព Cover (Poster Image)</label>
+          <input type="file" id="coverFile" accept="image/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-black hover:file:bg-amber-400 cursor-pointer">
         </div>
+
+        <!-- ប៊ូតុងរើស File វីដេអូ -->
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">Link វីដេអូ (MP4/HLS URL)</label>
-          <input type="url" id="videoUrl" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+          <label class="text-xs text-neutral-400 block mb-1">ជ្រើសរើសឯកសារវីដេអូ (Video File .mp4)</label>
+          <input type="file" id="videoFile" accept="video/mp4,video/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-black hover:file:bg-amber-400 cursor-pointer">
         </div>
+
         <div class="md:col-span-2 mt-2">
-          <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-lg transition active:scale-98">
-            រក្សាទុក និងដាក់បង្ហាញ
+          <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
+            <i data-lucide="upload-cloud"></i> រក្សាទុក និងដាក់បង្ហាញលើ Website
           </button>
         </div>
       </form>
@@ -55,17 +61,15 @@
     <h2 class="text-lg font-bold mb-4">បញ្ជីភាពយន្តកំពុងដំណើរការ</h2>
     <div class="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
       <div id="movieTable" class="divide-y divide-neutral-800">
-        <!-- Movies List Rendered by JS -->
+        <!-- Rendered by JS -->
       </div>
     </div>
 
   </div>
 
   <script>
-    // ទិន្នន័យដើម Default
     const defaultMovies = [
-      { id: '1', title: 'បណ្តាសាក្រៅ ២', price: '$2.50', cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-      { id: '2', title: 'ស្នេហា Private', price: 'Free', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' }
+      { id: '1', title: 'បណ្តាសាក្រៅ ២', price: '$2.50', cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
     ];
 
     function getMovies() {
@@ -109,19 +113,50 @@
       }
     }
 
-    document.getElementById('movieForm').addEventListener('submit', (e) => {
+    // Function បំប្លែង File រូបភាពទៅជា Data URL
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('movieForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const list = getMovies();
-      const newMovie = {
-        id: Date.now().toString(),
-        title: document.getElementById('title').value,
-        price: document.getElementById('price').value,
-        cover: document.getElementById('cover').value,
-        videoUrl: document.getElementById('videoUrl').value
-      };
-      list.unshift(newMovie);
-      saveMovies(list);
-      e.target.reset();
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `កំពុងដំណើរការ...`;
+
+      try {
+        const coverFileInput = document.getElementById('coverFile').files[0];
+        const videoFileInput = document.getElementById('videoFile').files[0];
+
+        // អានរូបភាព និងបង្កើត Object URL សម្រាប់វីដេអូ
+        const coverDataUrl = await readFileAsDataURL(coverFileInput);
+        const videoUrl = URL.createObjectURL(videoFileInput);
+
+        const list = getMovies();
+        const newMovie = {
+          id: Date.now().toString(),
+          title: document.getElementById('title').value,
+          price: document.getElementById('price').value,
+          cover: coverDataUrl,
+          videoUrl: videoUrl
+        };
+
+        list.unshift(newMovie);
+        saveMovies(list);
+        e.target.reset();
+        alert('វីដេអូត្រូវបានបញ្ចូលដោយជោគជ័យ!');
+      } catch (error) {
+        alert('មានបញ្ហាក្នុងការបញ្ចូលឯកសារ');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="upload-cloud"></i> រក្សាទុក និងដាក់បង្ហាញលើ Website`;
+        lucide.createIcons();
+      }
     });
 
     renderList();
