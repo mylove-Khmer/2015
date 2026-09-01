@@ -1,13 +1,13 @@
 [
   {
     "id": "1788290203964",
-    "title": "ចុចខាងក្រោមដើម្បីប្រើ",
-    "price": "3",
+    "title": "ចុចខាងក្រោមដើម្បីមើល",
+    "price": "$3.00",
     "cover": "https://res.cloudinary.com/slntwp4h/image/upload/v1788290200/r1qciu7hh8htejj4kw5r.jpg",
     "episodes": [
       {
         "epTitle": "ភាគ ១",
-        "videoUrl": "https://res.cloudinary.com/slntwp4h/video/upload/v1788290202/kuzl8kl8mk1azw5fl0vc.mp4"
+        "videoUrl": "https://res.cloudinary.com/slntwp4h/video/upload/v1788290202/kuzl8kl8mkiazw5fl0vc.mp4"
       }
     ]
   },
