@@ -1,29 +1,17 @@
 [
   {
-    "id": "1788290203964",
-    "title": "ចុចខាងក្រោមដើម្បីមើល",
-    "price": "$3.00",
-    "cover": "https://res.cloudinary.com/slntwp4h/image/upload/v1788290200/r1qciu7hh8htejj4kw5r.jpg",
-    "episodes": [
-      {
-        "epTitle": "ភាគ ១",
-        "videoUrl": "https://res.cloudinary.com/slntwp4h/video/upload/v1788290202/kuzl8kl8mkiazw5fl0vc.mp4"
-      }
-    ]
-  },
-  {
     "id": "1",
-    "title": "បណ្តាសាក្រៅ ២",
+    "title": "រឿង បណ្តាសាក្រៅ ២",
     "price": "$2.50",
-    "cover": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80",
+    "cover": "cover1.jpg",
     "episodes": [
       {
         "epTitle": "ភាគ ១",
-        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        "videoUrl": "ep1.mp4"
       },
       {
         "epTitle": "ភាគ ២",
-        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        "videoUrl": "ep2.mp4"
       }
     ]
   }
