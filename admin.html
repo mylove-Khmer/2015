@@ -14,7 +14,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
       <h1 class="text-xl md:text-2xl font-black text-amber-400 flex items-center gap-2">
-        <i data-lucide="shield-check"></i> Admin (គ្រប់គ្រងរឿងភាគ & Cloud Database)
+        <i data-lucide="shield-check"></i> Admin Panel (គ្រប់គ្រងរឿងភាគ)
       </h1>
       <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg border border-neutral-700">
         ទំព័រភ្ញៀវ ↗
@@ -22,7 +22,7 @@
     </div>
 
     <!-- Form បង្កើតរឿងថ្មី -->
-    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 mb-8 shadow-xl">
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 mb-6 shadow-xl">
       <h2 class="text-base font-bold mb-4 flex items-center gap-2 text-white">
         <i data-lucide="plus-circle" class="text-amber-400"></i> បង្កើតរឿងថ្មី (និងបញ្ចូលភាគទី ១)
       </h2>
@@ -50,23 +50,32 @@
         </div>
 
         <button type="submit" id="createBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
-          <i data-lucide="upload-cloud"></i> បង្កើតរឿង និង រក្សាទុក
+          <i data-lucide="upload-cloud"></i> បង្កើតរឿង និង Upload
         </button>
       </form>
     </div>
 
-    <!-- បញ្ជីរឿង & បន្ថែមភាគ -->
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-base font-bold">បញ្ជីរឿងទាំងអស់នៅលើ Cloud</h2>
-      <button onclick="fetchCloudData()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
-        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh ទិន្នន័យ
-      </button>
+    <!-- ប្រអប់ Sync កូដ movies.json ទៅកាន់ GitHub -->
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 mb-6">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+          <i data-lucide="code"></i> កូដទិន្នន័យរួម movies.json (សម្រាប់ដាក់លើ GitHub)
+        </h3>
+        <button onclick="copyJsonCode()" class="bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy កូដ JSON នេះ
+        </button>
+      </div>
+      <textarea id="jsonOutput" readonly class="w-full h-24 bg-black/60 border border-neutral-800 rounded-lg p-2 text-[11px] font-mono text-neutral-300 focus:outline-none"></textarea>
+      <p class="text-[10px] text-neutral-400 mt-1">💡 ពេល Upload រឿងចប់ សូមចុច <b>"Copy កូដ JSON នេះ"</b> រួចយកទៅផាស (Paste) ក្នុង file <code>movies.json</code> លើ GitHub នោះភ្ញៀវគ្រប់គ្នានឹងឃើញរឿងភ្លាមៗ!</p>
     </div>
+
+    <!-- បញ្ជីរឿង -->
+    <h2 class="text-base font-bold mb-3">បញ្ជីរឿងទាំងអស់</h2>
     <div id="movieList" class="space-y-4"></div>
 
   </div>
 
-  <!-- Modal បន្ថែមភាគថ្មី -->
+  <!-- Modal បន្ថែមភាគ -->
   <div id="addEpModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl max-w-md w-full relative shadow-2xl">
       <button onclick="closeEpModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
@@ -96,36 +105,36 @@
   <script>
     const CLOUD_NAME = "slntwp4h";
     const UPLOAD_PRESET = "my_preset";
-    // កន្លែងផ្ទុក Database រួម
-    const API_STORAGE_URL = "https://api.jsonbin.io/v3/b/66d54d92e41b4d34e42a0b12";
-    const MASTER_KEY = "$2a$10$7Z2aGg0K1q5uKq0xZk0t.eKq0xZk0t.eKq0xZk0t.eKq0xZk0t.";
 
-    let globalMovies = [];
+    let movies = [];
 
-    const defaultMovies = [
-      {
-        id: '1',
-        title: 'បណ្តាសាក្រៅ ២',
-        price: '$2.50',
-        cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80',
-        episodes: [
-          { epTitle: 'ភាគ ១', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-          { epTitle: 'ភាគ ២', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
-          { epTitle: 'ភាគ ៣ (ចប់)', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }
-        ]
+    async function initData() {
+      try {
+        const res = await fetch('movies.json?t=' + Date.now());
+        if (res.ok) {
+          movies = await res.json();
+        } else {
+          const local = localStorage.getItem('angkor_movies');
+          movies = local ? JSON.parse(local) : [];
+        }
+      } catch (e) {
+        const local = localStorage.getItem('angkor_movies');
+        movies = local ? JSON.parse(local) : [];
       }
-    ];
+      saveAndRefresh();
+    }
 
-    async function fetchCloudData() {
-      const savedLocal = localStorage.getItem('angkor_movies');
-      globalMovies = savedLocal ? JSON.parse(savedLocal) : defaultMovies;
+    function saveAndRefresh() {
+      localStorage.setItem('angkor_movies', JSON.stringify(movies));
+      document.getElementById('jsonOutput').value = JSON.stringify(movies, null, 2);
       renderList();
     }
 
-    function saveMovies(movies) {
-      globalMovies = movies;
-      localStorage.setItem('angkor_movies', JSON.stringify(movies));
-      renderList();
+    function copyJsonCode() {
+      const textarea = document.getElementById('jsonOutput');
+      textarea.select();
+      navigator.clipboard.writeText(textarea.value);
+      alert('បាន Copy កូដ JSON ជោគជ័យ! សូមយកទៅ Paste ក្នុង file movies.json លើ GitHub។');
     }
 
     function uploadToCloudWithProgress(file, resourceType, onProgress) {
@@ -134,7 +143,6 @@
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', UPLOAD_PRESET);
-
         xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`);
 
         xhr.upload.onprogress = (e) => {
@@ -150,26 +158,25 @@
             if (xhr.status === 200 && data.secure_url) {
               resolve(data.secure_url);
             } else {
-              reject(data.error ? data.error.message : 'Upload បរាជ័យពី Cloudinary');
+              reject(data.error ? data.error.message : 'Upload failed');
             }
           } catch (err) {
-            reject('Error Parsing Response');
+            reject('Error parsing response');
           }
         };
-
-        xhr.onerror = () => reject('បញ្ហាអ៊ីនធឺណិត ឬ Network Error');
+        xhr.onerror = () => reject('Network error');
         xhr.send(formData);
       });
     }
 
     function renderList() {
       const container = document.getElementById('movieList');
-      if (globalMovies.length === 0) {
+      if (movies.length === 0) {
         container.innerHTML = `<div class="p-8 text-center text-neutral-500 bg-neutral-900 rounded-2xl border border-neutral-800">មិនទាន់មានរឿងនៅឡើយទេ។</div>`;
         return;
       }
 
-      container.innerHTML = globalMovies.map(m => `
+      container.innerHTML = movies.map(m => `
         <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-5">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
             <div class="flex items-center gap-4">
@@ -208,7 +215,6 @@
       lucide.createIcons();
     }
 
-    // បង្កើតរឿងថ្មី
     document.getElementById('createMovieForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('createBtn');
@@ -217,7 +223,7 @@
       const directVideoUrl = document.getElementById('firstVideoUrlDirect').value.trim();
 
       if (!videoFile && !directVideoUrl) {
-        alert('សូមជ្រើសរើស File វីដេអូ ឬដាក់ Link វីដេអូ (.mp4)!');
+        alert('សូមជ្រើសរើស File វីដេអូ ឬដាក់ Link វីដេអូ!');
         return;
       }
 
@@ -245,20 +251,19 @@
           episodes: [{ epTitle: 'ភាគ ១', videoUrl: videoUrl }]
         };
 
-        const updated = [newMovie, ...globalMovies];
-        saveMovies(updated);
+        movies.unshift(newMovie);
+        saveAndRefresh();
         e.target.reset();
-        alert('🎉 បានបង្កើតរឿង និងរក្សាទុកចូលក្នុងប្រព័ន្ធជោគជ័យ!');
+        alert('🎉 បានបង្កើតរឿងជោគជ័យ! សូម Copy កូដ JSON ក្នុងប្រអប់ខាងលើ ទៅដាក់ក្នុង movies.json លើ GitHub។');
       } catch (err) {
         alert('មានបញ្ហាក្នុងការ Upload៖ ' + err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="upload-cloud"></i> បង្កើតរឿង និង រក្សាទុក`;
+        btn.innerHTML = `<i data-lucide="upload-cloud"></i> បង្កើតរឿង និង Upload`;
         lucide.createIcons();
       }
     });
 
-    // បន្ថែមភាគថ្មី
     function openEpModal(id, title, nextEpNum) {
       document.getElementById('modalMovieId').value = id;
       document.getElementById('modalMovieTitle').innerText = `បន្ថែមភាគសម្រាប់៖ ${title}`;
@@ -297,14 +302,14 @@
           });
         }
 
-        const movie = globalMovies.find(m => m.id === id);
+        const movie = movies.find(m => m.id === id);
         if (movie) {
           if (!movie.episodes) movie.episodes = [];
           movie.episodes.push({ epTitle, videoUrl });
-          saveMovies([...globalMovies]);
+          saveAndRefresh();
         }
         closeEpModal();
-        alert('🎉 បានបន្ថែមភាគថ្មីជោគជ័យ!');
+        alert('🎉 បានបន្ថែមភាគថ្មីជោគជ័យ! សូម Copy កូដ JSON ទៅដាក់ក្នុង movies.json លើ GitHub។');
       } catch (err) {
         alert('Upload ភាគថ្មីបរាជ័យ៖ ' + err);
       } finally {
@@ -316,21 +321,22 @@
 
     function deleteMovie(id) {
       if (confirm('តើអ្នកពិតជាចង់លុបរឿងនេះមែនទេ?')) {
-        saveMovies(globalMovies.filter(m => m.id !== id));
+        movies = movies.filter(m => m.id !== id);
+        saveAndRefresh();
       }
     }
 
     function deleteEpisode(movieId, epIdx) {
       if (confirm('តើអ្នកចង់ដកភាគនេះចេញមែនទេ?')) {
-        const movie = globalMovies.find(m => m.id === movieId);
+        const movie = movies.find(m => m.id === movieId);
         if (movie && movie.episodes) {
           movie.episodes.splice(epIdx, 1);
-          saveMovies([...globalMovies]);
+          saveAndRefresh();
         }
       }
     }
 
-    fetchCloudData();
+    initData();
   </script>
 </body>
 </html>
