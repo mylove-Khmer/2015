@@ -15,27 +15,38 @@
 <body class="text-white pb-24 select-none font-sans">
 
   <!-- Navbar -->
-  <header class="fixed top-0 inset-x-0 h-16 bg-black/60 backdrop-blur-md z-40 flex items-center justify-between px-6 border-b border-white/5">
+  <header class="fixed top-0 inset-x-0 h-16 bg-black/60 backdrop-blur-md z-40 flex items-center justify-between px-4 md:px-8 border-b border-white/5">
     <div class="flex items-center gap-3">
       <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">A</div>
-      <span class="text-xl font-bold tracking-tight">Angkor DC</span>
+      <span class="text-lg md:text-xl font-bold tracking-tight">Angkor DC</span>
     </div>
-    <div class="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center cursor-pointer hover:border-amber-500 transition">
-      <i data-lucide="user" class="w-5 h-5 text-neutral-300"></i>
+
+    <!-- កាបូបលុយភ្ញៀវ -->
+    <div class="flex items-center gap-3">
+      <div onclick="openTopUpModal()" class="flex items-center gap-2 bg-neutral-900 border border-amber-500/30 hover:border-amber-400 px-3 py-1.5 rounded-full cursor-pointer transition shadow-lg shadow-amber-500/5">
+        <i data-lucide="wallet" class="w-4 h-4 text-amber-400"></i>
+        <div class="text-xs">
+          <span class="text-neutral-400 text-[10px] block leading-none">សមតុល្យ</span>
+          <span id="userBalanceDisplay" class="font-bold text-amber-400">$0.00</span>
+        </div>
+        <button class="bg-amber-500 hover:bg-amber-400 text-black rounded-full p-0.5 ml-1">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <div class="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center cursor-pointer">
+        <i data-lucide="user" class="w-5 h-5 text-neutral-300"></i>
+      </div>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <div id="heroSection" class="relative h-[68vh] flex flex-col justify-end px-6 pb-8">
-    <!-- Rendered by JS -->
-  </div>
+  <div id="heroSection" class="relative h-[68vh] flex flex-col justify-end px-6 pb-8"></div>
 
   <!-- Movie List Carousel -->
   <section class="px-6 mt-4">
     <h2 class="text-lg font-bold mb-4">ភាពយន្ត និងរឿងភាគទាំងអស់</h2>
-    <div id="moviesRow" class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
-      <!-- Rendered by JS -->
-    </div>
+    <div id="moviesRow" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
   </section>
 
   <!-- Bottom Navigation Bar -->
@@ -48,9 +59,9 @@
       <i data-lucide="search" class="w-5 h-5"></i>
       <span>Search</span>
     </div>
-    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
-      <i data-lucide="bell" class="w-5 h-5"></i>
-      <span>Notifications</span>
+    <div onclick="openTopUpModal()" class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
+      <i data-lucide="wallet" class="w-5 h-5"></i>
+      <span>Top Up</span>
     </div>
     <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
       <i data-lucide="film" class="w-5 h-5"></i>
@@ -58,11 +69,9 @@
     </div>
   </nav>
 
-  <!-- Video Player Modal (មានបញ្ជីភាគនៅខាងក្រោម) -->
+  <!-- Video Player Modal -->
   <div id="videoModal" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-start overflow-y-auto p-4 md:p-8">
     <div class="w-full max-w-4xl relative mt-2 md:mt-6">
-      
-      <!-- ប៊ូតុងបិទ -->
       <div class="flex items-center justify-between mb-3">
         <h3 id="playerMovieTitle" class="font-bold text-base md:text-lg text-amber-400 truncate">ចំណងជើងរឿង</h3>
         <button onclick="closePlayer()" class="text-neutral-400 hover:text-white flex items-center gap-1 font-bold text-sm bg-neutral-800/80 px-3 py-1.5 rounded-lg">
@@ -70,27 +79,58 @@
         </button>
       </div>
 
-      <!-- ផ្ទាំងវីដេអូ Player -->
       <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 mb-5">
         <video id="mainVideo" controls playsinline class="w-full aspect-video">
           <source id="videoSource" src="" type="video/mp4">
         </video>
       </div>
 
-      <!-- ផ្នែកបញ្ជីភាគទាំងអស់ (Episodes List) -->
       <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-6 mb-8">
         <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
           <i data-lucide="list-video" class="w-4 h-4 text-amber-400"></i> ជ្រើសរើសភាគដើម្បីទស្សនា៖
         </h4>
-        <div id="episodesListContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-          <!-- បញ្ជីភាគនឹងបង្ហាញនៅត្រង់នេះតាមរយៈ JS -->
-        </div>
+        <div id="episodesListContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal បញ្ចូលលុយ (KHQR Modal ប្រើរូប Admin បានដាក់) -->
+  <div id="topUpModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 max-w-sm w-full relative shadow-2xl text-center">
+      <button onclick="closeTopUpModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="w-12 h-12 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+        <i data-lucide="qr-code" class="w-6 h-6"></i>
       </div>
 
+      <h3 class="text-lg font-bold text-white mb-1">បញ្ចូលលុយក្នុងគណនី</h3>
+      <p id="topUpNotice" class="text-xs text-neutral-400 mb-4">សមតុល្យរបស់អ្នកមិនគ្រប់គ្រាន់ទេ។ សូមបញ្ចូលលុយដើម្បីទស្សនា។</p>
+
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <button onclick="selectAmount(1)" class="amt-btn border border-neutral-700 bg-neutral-800 py-2 rounded-xl text-xs font-bold hover:border-amber-400">$1.00</button>
+        <button onclick="selectAmount(2.5)" class="amt-btn border border-amber-500 bg-amber-500/10 text-amber-400 py-2 rounded-xl text-xs font-bold">$2.50</button>
+        <button onclick="selectAmount(5)" class="amt-btn border border-neutral-700 bg-neutral-800 py-2 rounded-xl text-xs font-bold hover:border-amber-400">$5.00</button>
+      </div>
+
+      <!-- រូប KHQR របស់ Admin -->
+      <div class="bg-white p-3 rounded-2xl inline-block mb-3 border-4 border-red-600">
+        <img id="guestKhqrImg" src="" class="w-44 h-44 object-contain mx-auto" />
+        <p class="text-[10px] text-black font-black mt-1">KHQR • SCAN TO PAY</p>
+      </div>
+
+      <p class="text-[11px] text-neutral-400 mb-4">ស្កេនតាមរយៈ App ធនាគារណាក៏បាន (ABA, ACLEDA, Bakong...)</p>
+
+      <button onclick="confirmDeposit()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition active:scale-98 flex items-center justify-center gap-2">
+        <i data-lucide="check-circle"></i> ខ្ញុំបានបង់ប្រាក់រួចរាល់ ($<span id="depositBtnAmt">2.50</span>)
+      </button>
     </div>
   </div>
 
   <script>
+    const DEFAULT_QR = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=KHQR_PAYMENT_ANGKORDC";
+
     const defaultMovies = [
       { 
         id: '1', 
@@ -98,17 +138,91 @@
         price: '$2.50', 
         cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80', 
         episodes: [
-          { epTitle: 'ភាគ ១', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-          { epTitle: 'ភាគ ២', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
-          { epTitle: 'ភាគ ៣ (ចប់)', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }
+          { epTitle: 'ភាគ ១', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
         ]
       }
     ];
 
     let currentMovie = null;
     let currentEpIndex = 0;
+    let pendingMovieId = null;
+    let selectedDepositAmt = 2.5;
+
+    function getKhqrImage() {
+      return localStorage.getItem('angkor_khqr_image') || DEFAULT_QR;
+    }
+
+    function getBalance() {
+      const bal = localStorage.getItem('guest_wallet_balance');
+      return bal !== null ? parseFloat(bal) : 0.00;
+    }
+
+    function setBalance(amount) {
+      localStorage.setItem('guest_wallet_balance', amount.toFixed(2));
+      updateBalanceUI();
+    }
+
+    function updateBalanceUI() {
+      document.getElementById('userBalanceDisplay').innerText = `$${getBalance().toFixed(2)}`;
+    }
+
+    function getPurchasedMovies() {
+      const p = localStorage.getItem('unlocked_movies');
+      return p ? JSON.parse(p) : [];
+    }
+
+    function addPurchasedMovie(id) {
+      const p = getPurchasedMovies();
+      if (!p.includes(id)) {
+        p.push(id);
+        localStorage.setItem('unlocked_movies', JSON.stringify(p));
+      }
+    }
+
+    function isMovieUnlocked(movie) {
+      const priceStr = (movie.price || '').toLowerCase().replace('$', '').trim();
+      const priceNum = parseFloat(priceStr);
+      if (isNaN(priceNum) || priceNum === 0 || priceStr === 'free') return true;
+      return getPurchasedMovies().includes(movie.id);
+    }
+
+    function parseMoviePrice(priceStr) {
+      const p = (priceStr || '').toLowerCase().replace('$', '').trim();
+      const num = parseFloat(p);
+      return isNaN(num) ? 0 : num;
+    }
+
+    function handleWatchClick(movieId) {
+      const data = localStorage.getItem('angkor_movies');
+      const movies = data ? JSON.parse(data) : defaultMovies;
+      const movie = movies.find(m => m.id === movieId);
+      if (!movie) return;
+
+      const price = parseMoviePrice(movie.price);
+
+      if (isMovieUnlocked(movie)) {
+        openPlayer(movieId, 0);
+        return;
+      }
+
+      const balance = getBalance();
+      if (balance >= price) {
+        if (confirm(`រឿងនេះមានតម្លៃ $${price.toFixed(2)}។ តើអ្នកយល់ព្រមកាត់ចេញពីកាបូបលុយរបស់អ្នក ($${balance.toFixed(2)}) ដើម្បីទស្សនាទេ?`)) {
+          setBalance(balance - price);
+          addPurchasedMovie(movie.id);
+          alert(`ទិញបានជោគជ័យ! សមតុល្យនៅសល់៖ $${getBalance().toFixed(2)}`);
+          openPlayer(movieId, 0);
+        }
+      } else {
+        pendingMovieId = movieId;
+        document.getElementById('topUpNotice').innerHTML = `រឿង «<b class="text-white">${movie.title}</b>» តម្លៃ <b>$${price.toFixed(2)}</b> ប៉ុន្តែអ្នកមានត្រឹម <b>$${balance.toFixed(2)}</b>។ សូមបញ្ចូលលុយបន្ថែម៖`;
+        selectAmount(price);
+        openTopUpModal();
+      }
+    }
 
     function loadData() {
+      updateBalanceUI();
       const data = localStorage.getItem('angkor_movies');
       const movies = data ? JSON.parse(data) : defaultMovies;
 
@@ -120,14 +234,14 @@
           <div class="max-w-xl">
             <span class="text-xs bg-amber-500 text-black font-black px-2 py-0.5 rounded uppercase tracking-wider mb-2 inline-block">តម្លៃ៖ ${hero.price}</span>
             <h1 class="text-3xl font-black mb-4">${hero.title}</h1>
-            <button onclick="openPlayer('${hero.id}', 0)" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2">
-              <i data-lucide="play" class="w-5 h-5 fill-black"></i> Play Now
+            <button onclick="handleWatchClick('${hero.id}')" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition active:scale-95">
+              <i data-lucide="play" class="w-5 h-5 fill-black"></i> ទស្សនាឥឡូវនេះ
             </button>
           </div>
         `;
 
         document.getElementById('moviesRow').innerHTML = movies.map(m => `
-          <div onclick="openPlayer('${m.id}', 0)" class="min-w-[140px] md:min-w-[170px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
+          <div onclick="handleWatchClick('${m.id}')" class="min-w-[140px] md:min-w-[170px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
             <div class="relative">
               <img src="${m.cover}" class="w-full h-48 object-cover" />
               <span class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">${m.price}</span>
@@ -138,13 +252,39 @@
             </div>
           </div>
         `).join('');
-      } else {
-        document.getElementById('heroSection').innerHTML = `<p class="text-center text-neutral-500">មិនទាន់មានវីដេអូសម្រាប់ចាក់នៅឡើយទេ។</p>`;
-        document.getElementById('moviesRow').innerHTML = '';
       }
       lucide.createIcons();
     }
 
+    function openTopUpModal() {
+      document.getElementById('guestKhqrImg').src = getKhqrImage();
+      document.getElementById('topUpModal').classList.remove('hidden');
+      document.getElementById('topUpModal').classList.add('flex');
+    }
+
+    function closeTopUpModal() {
+      document.getElementById('topUpModal').classList.add('hidden');
+      document.getElementById('topUpModal').classList.remove('flex');
+    }
+
+    function selectAmount(amt) {
+      selectedDepositAmt = amt;
+      document.getElementById('depositBtnAmt').innerText = amt.toFixed(2);
+    }
+
+    function confirmDeposit() {
+      setBalance(getBalance() + selectedDepositAmt);
+      alert(`បញ្ចូលលុយ $${selectedDepositAmt.toFixed(2)} បានជោគជ័យ! សមតុល្យបច្ចុប្បន្ន៖ $${getBalance().toFixed(2)}`);
+      closeTopUpModal();
+
+      if (pendingMovieId) {
+        const idToWatch = pendingMovieId;
+        pendingMovieId = null;
+        handleWatchClick(idToWatch);
+      }
+    }
+
+    // Video Player
     const modal = document.getElementById('videoModal');
     const video = document.getElementById('mainVideo');
     const videoSource = document.getElementById('videoSource');
@@ -153,11 +293,8 @@
       const data = localStorage.getItem('angkor_movies');
       const movies = data ? JSON.parse(data) : defaultMovies;
       currentMovie = movies.find(m => m.id === movieId);
-
       if (!currentMovie) return;
-      currentEpIndex = epIndex;
 
-      // ករណីរឿងចាស់មានតែ videoUrl តែមួយ
       const eps = currentMovie.episodes || [{ epTitle: 'ភាគ ១', videoUrl: currentMovie.videoUrl }];
       currentMovie.episodes = eps;
 
@@ -197,7 +334,6 @@
       lucide.createIcons();
     }
 
-    // ពេលវីដេអូចប់មួយភាគ ចាក់ភាគបន្ទាប់ដោយស្វ័យប្រវត្តិ
     video.onended = () => {
       if (currentMovie && currentEpIndex + 1 < currentMovie.episodes.length) {
         playEpisode(currentEpIndex + 1);
