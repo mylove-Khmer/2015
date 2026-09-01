@@ -3,70 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Angkor DC - Admin Panel</title>
+  <title>Angkor DC - Admin Panel (គ្រប់គ្រងរឿងភាគ)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>body { background-color: #0b0b0e; }</style>
 </head>
 <body class="text-white p-4 md:p-10 font-sans">
-  <div class="max-w-3xl mx-auto">
+  <div class="max-w-4xl mx-auto">
     
+    <!-- Header -->
     <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
       <h1 class="text-xl md:text-2xl font-black text-amber-400 flex items-center gap-2">
-        <i data-lucide="shield-check"></i> Admin (បញ្ចូលវីដេអូផ្ទាល់)
+        <i data-lucide="film"></i> Admin (គ្រប់គ្រងរឿងភាគ & វីដេអូ)
       </h1>
       <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg border border-neutral-700">
         ទំព័រភ្ញៀវ ↗
       </a>
     </div>
 
-    <!-- Form បញ្ចូល -->
+    <!-- Form បង្កើតរឿងថ្មី -->
     <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 mb-8 shadow-xl">
       <h2 class="text-base font-bold mb-4 flex items-center gap-2 text-white">
-        <i data-lucide="plus-circle" class="text-amber-400"></i> បញ្ចូលវីដេអូថ្មី
+        <i data-lucide="plus-circle" class="text-amber-400"></i> បង្កើតរឿងថ្មី (និងបញ្ចូលភាគទី ១ ដំបូង)
       </h2>
-      <form id="movieForm" class="space-y-4">
-        <div>
-          <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង (ភាសាខ្មែរ)</label>
-          <input type="text" id="title" required placeholder="ឧ. បណ្តាសាក្រៅ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+      <form id="createMovieForm" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង (ជាភាសាខ្មែរ)</label>
+            <input type="text" id="title" required placeholder="ឧ. ស្នេហាឆ្លងភព" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="text-xs text-neutral-400 block mb-1">តម្លៃ ($)</label>
+            <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+          </div>
         </div>
 
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">តម្លៃ ($)</label>
-          <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
-        </div>
-
-        <div>
-          <label class="text-xs text-neutral-400 block mb-1">ជ្រើសរើសរូប Poster ពីរូបភាពក្នុងម៉ាស៊ីន</label>
+          <label class="text-xs text-neutral-400 block mb-1">រូប Poster រឿង (Cover Image)</label>
           <input type="file" id="coverFile" accept="image/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
         </div>
 
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">ជ្រើសរើសឯកសារវីដេអូ (.mp4)</label>
-          <input type="file" id="videoFile" accept="video/mp4,video/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
+          <label class="text-xs text-neutral-400 block mb-1">ឯកសារវីដេអូសម្រាប់ «ភាគ ១» (.mp4)</label>
+          <input type="file" id="firstVideoFile" accept="video/mp4,video/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
         </div>
 
-        <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
-          <i data-lucide="upload-cloud"></i> បញ្ចូល និងរក្សាទុក
+        <button type="submit" id="createBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
+          <i data-lucide="upload-cloud"></i> បង្កើតរឿង និង Upload ភាគ ១
         </button>
       </form>
     </div>
 
-    <!-- បញ្ជីវីដេអូ -->
-    <h2 class="text-base font-bold mb-3">បញ្ជីភាពយន្ត</h2>
-    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
-      <div id="movieTable" class="divide-y divide-neutral-800"></div>
-    </div>
+    <!-- បញ្ជីរឿង & ប៊ូតុងបន្ថែមភាគ -->
+    <h2 class="text-base font-bold mb-3">បញ្ជីរឿងទាំងអស់ និងការគ្រប់គ្រងភាគ</h2>
+    <div id="movieList" class="space-y-4"></div>
 
   </div>
 
+  <!-- Modal បន្ថែមភាគថ្មី -->
+  <div id="addEpModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl max-w-md w-full relative shadow-2xl">
+      <button onclick="closeEpModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h3 class="text-lg font-bold mb-1 text-amber-400" id="modalMovieTitle">បន្ថែមភាគ</h3>
+      <p class="text-xs text-neutral-400 mb-4">ជ្រើសរើស File វីដេអូដើម្បីបន្ថែមភាគថ្មី</p>
+
+      <form id="addEpForm" class="space-y-4">
+        <input type="hidden" id="modalMovieId">
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">ឈ្មោះភាគ</label>
+          <input type="text" id="epName" required placeholder="ឧ. ភាគ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 text-sm focus:border-amber-400 focus:outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">ឯកសារវីដេអូ (.mp4)</label>
+          <input type="file" id="epVideoFile" accept="video/mp4,video/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
+        </div>
+        <button type="submit" id="modalUploadBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2">
+          <i data-lucide="plus"></i> បញ្ចូលភាគថ្មីនេះ
+        </button>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // ភ្ជាប់ព័ត៌មាន Cloudinary របស់អ្នក
-    const CLOUD_NAME = "slntwp4h"; 
+    const CLOUD_NAME = "slntwp4h";
     const UPLOAD_PRESET = "my_preset";
 
     const defaultMovies = [
-      { id: '1', title: 'បណ្តាសាក្រៅ ២', price: '$2.50', cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
+      {
+        id: '1',
+        title: 'បណ្តាសាក្រៅ ២',
+        price: '$2.50',
+        cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80',
+        episodes: [
+          { epTitle: 'ភាគ ១', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+          { epTitle: 'ភាគ ២', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
+          { epTitle: 'ភាគ ៣ (ចប់)', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }
+        ]
+      }
     ];
 
     function getMovies() {
@@ -79,38 +114,6 @@
       renderList();
     }
 
-    function renderList() {
-      const list = getMovies();
-      const container = document.getElementById('movieTable');
-      if (list.length === 0) {
-        container.innerHTML = `<p class="p-6 text-center text-neutral-500 text-sm">មិនទាន់មានវីដេអូទេ។</p>`;
-        return;
-      }
-      container.innerHTML = list.map(m => `
-        <div class="flex items-center justify-between p-4 hover:bg-neutral-800/40 transition">
-          <div class="flex items-center gap-3">
-            <img src="${m.cover}" class="w-12 h-16 object-cover rounded-lg bg-neutral-800" />
-            <div>
-              <p class="font-bold text-sm text-white">${m.title}</p>
-              <span class="inline-block mt-1 text-xs bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/20">${m.price}</span>
-            </div>
-          </div>
-          <button onclick="deleteMovie('${m.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1">
-            <i data-lucide="trash-2" class="w-4 h-4"></i> ដកចេញ
-          </button>
-        </div>
-      `).join('');
-      lucide.createIcons();
-    }
-
-    function deleteMovie(id) {
-      if (confirm('តើអ្នកចង់ដកវីដេអូនេះចោលមែនទេ?')) {
-        const list = getMovies().filter(m => m.id !== id);
-        saveMovies(list);
-      }
-    }
-
-    // Function Upload ឯកសារឡើង Cloudinary
     async function uploadToCloud(file, resourceType) {
       const formData = new FormData();
       formData.append('file', file);
@@ -120,21 +123,68 @@
         body: formData
       });
       const data = await res.json();
-      if (!data.secure_url) {
-        throw new Error('Upload Failed');
-      }
+      if (!data.secure_url) throw new Error('Upload Failed');
       return data.secure_url;
     }
 
-    document.getElementById('movieForm').addEventListener('submit', async (e) => {
+    function renderList() {
+      const list = getMovies();
+      const container = document.getElementById('movieList');
+      if (list.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-neutral-500 bg-neutral-900 rounded-2xl border border-neutral-800">មិនទាន់មានរឿងនៅឡើយទេ។</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(m => `
+        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-5">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+            <div class="flex items-center gap-4">
+              <img src="${m.cover}" class="w-14 h-20 object-cover rounded-xl bg-neutral-800" />
+              <div>
+                <h3 class="font-bold text-base text-white">${m.title}</h3>
+                <span class="inline-block mt-1 text-xs bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/20">${m.price}</span>
+                <p class="text-xs text-neutral-400 mt-1">មានចំនួន៖ <b class="text-white">${m.episodes ? m.episodes.length : 1} ភាគ</b></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openEpModal('${m.id}', '${m.title}', ${m.episodes ? m.episodes.length + 1 : 2})" class="bg-amber-500 hover:bg-amber-400 text-black px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> បន្ថែមភាគថ្មី
+              </button>
+              <button onclick="deleteMovie('${m.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> លុបរឿង
+              </button>
+            </div>
+          </div>
+
+          <!-- បញ្ជីភាគនៃរឿងនីមួយៗ -->
+          <div class="mt-3">
+            <p class="text-xs text-neutral-400 mb-2 font-medium">ភាគដែលមានស្រាប់៖</p>
+            <div class="flex flex-wrap gap-2">
+              ${(m.episodes || []).map((ep, idx) => `
+                <div class="bg-neutral-800 border border-neutral-700 text-xs px-3 py-1.5 rounded-lg flex items-center gap-2">
+                  <span>${ep.epTitle}</span>
+                  <button onclick="deleteEpisode('${m.id}', ${idx})" class="text-neutral-500 hover:text-red-400">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // បង្កើតរឿងថ្មី
+    document.getElementById('createMovieForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('submitBtn');
+      const btn = document.getElementById('createBtn');
       btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-2">⏳</span> កំពុង Upload វីដេអូ សូមរង់ចាំ...`;
+      btn.innerHTML = `<span class="animate-spin mr-2">⏳</span> កំពុង Upload... សូមរង់ចាំ`;
 
       try {
         const coverFile = document.getElementById('coverFile').files[0];
-        const videoFile = document.getElementById('videoFile').files[0];
+        const videoFile = document.getElementById('firstVideoFile').files[0];
 
         const coverUrl = await uploadToCloud(coverFile, 'image');
         const videoUrl = await uploadToCloud(videoFile, 'video');
@@ -145,21 +195,86 @@
           title: document.getElementById('title').value,
           price: document.getElementById('price').value,
           cover: coverUrl,
-          videoUrl: videoUrl
+          episodes: [
+            { epTitle: 'ភាគ ១', videoUrl: videoUrl }
+          ]
         };
 
         list.unshift(newMovie);
         saveMovies(list);
         e.target.reset();
-        alert('បានបញ្ចូលវីដេអូជោគជ័យ!');
+        alert('បានបង្កើតរឿង និងបញ្ចូលភាគ ១ ជោគជ័យ!');
       } catch (err) {
-        alert('មានបញ្ហាក្នុងការ Upload សូមពិនិត្យមើលទំហំឯកសារ ឬល្បឿនអ៊ីនធឺណិត');
+        alert('Upload បរាជ័យ សូមពិនិត្យអ៊ីនធឺណិត');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="upload-cloud"></i> បញ្ចូល និងរក្សាទុក`;
+        btn.innerHTML = `<i data-lucide="upload-cloud"></i> បង្កើតរឿង និង Upload ភាគ ១`;
         lucide.createIcons();
       }
     });
+
+    // បន្ថែមភាគថ្មី
+    function openEpModal(id, title, nextEpNum) {
+      document.getElementById('modalMovieId').value = id;
+      document.getElementById('modalMovieTitle').innerText = `បន្ថែមភាគសម្រាប់៖ ${title}`;
+      document.getElementById('epName').value = `ភាគ ${nextEpNum}`;
+      document.getElementById('addEpModal').classList.remove('hidden');
+      document.getElementById('addEpModal').classList.add('flex');
+    }
+
+    function closeEpModal() {
+      document.getElementById('addEpModal').classList.add('hidden');
+      document.getElementById('addEpModal').classList.remove('flex');
+      document.getElementById('addEpForm').reset();
+    }
+
+    document.getElementById('addEpForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('modalUploadBtn');
+      btn.disabled = true;
+      btn.innerHTML = `កំពុង Upload ភាគថ្មី...`;
+
+      try {
+        const id = document.getElementById('modalMovieId').value;
+        const epTitle = document.getElementById('epName').value;
+        const videoFile = document.getElementById('epVideoFile').files[0];
+
+        const videoUrl = await uploadToCloud(videoFile, 'video');
+
+        const list = getMovies();
+        const movie = list.find(m => m.id === id);
+        if (movie) {
+          if (!movie.episodes) movie.episodes = [];
+          movie.episodes.push({ epTitle, videoUrl });
+          saveMovies(list);
+        }
+        closeEpModal();
+        alert('បានបន្ថែមភាគថ្មីជោគជ័យ!');
+      } catch (err) {
+        alert('Upload ភាគថ្មីបរាជ័យ');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="plus"></i> បញ្ចូលភាគថ្មីនេះ`;
+        lucide.createIcons();
+      }
+    });
+
+    function deleteMovie(id) {
+      if (confirm('តើអ្នកពិតជាចង់លុបរឿងនេះមែនទេ?')) {
+        saveMovies(getMovies().filter(m => m.id !== id));
+      }
+    }
+
+    function deleteEpisode(movieId, epIdx) {
+      if (confirm('តើអ្នកចង់ដកភាគនេះចេញមែនទេ?')) {
+        const list = getMovies();
+        const movie = list.find(m => m.id === movieId);
+        if (movie && movie.episodes) {
+          movie.episodes.splice(epIdx, 1);
+          saveMovies(list);
+        }
+      }
+    }
 
     renderList();
   </script>
