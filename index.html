@@ -147,7 +147,6 @@
     let currentMovie = null;
     let currentEpIndex = 0;
 
-    // ពិនិត្យមើលរឿងដែលបានបង់ប្រាក់
     function getPurchasedMovies() {
       const p = localStorage.getItem(`unlocked_${getUserId()}`);
       return p ? JSON.parse(p) : [];
@@ -174,7 +173,6 @@
       return isNaN(num) ? 0 : num;
     }
 
-    // មុខងារបង្ហាញ QR Code ពេលភ្ញៀវមិនទាន់បង់ប្រាក់
     function showPayModal(movie) {
       selectedMovieToPay = movie;
       const price = parseMoviePrice(movie.price);
@@ -187,20 +185,17 @@
       document.getElementById('qrPayModal').classList.add('flex');
     }
 
-    // ពេលភ្ញៀវចុចលើរឿង/វីដេអូណាមួយ
     function handleWatchClick(movieId, targetEpIndex = 0) {
       const data = localStorage.getItem('angkor_movies');
       const movies = data ? JSON.parse(data) : defaultMovies;
       const movie = movies.find(m => m.id === movieId);
       if (!movie) return;
 
-      // បើសិនជាអត់ទាន់បានបង់ប្រាក់ទេ គឺលោត QR ភ្លាម មិនឱ្យមើលឡើយ
       if (!isMovieUnlocked(movie)) {
         showPayModal(movie);
         return;
       }
 
-      // បើបានបង់ប្រាក់រួចហើយ ទើបអនុញ្ញាតឱ្យបើកមើល
       openPlayer(movieId, targetEpIndex);
     }
 
@@ -209,7 +204,6 @@
       document.getElementById('qrPayModal').classList.remove('flex');
     }
 
-    // ផ្ញើស្លីបទៅ Telegram Bot
     document.getElementById('slipForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('sendSlipBtn');
@@ -261,7 +255,6 @@
       }
     });
 
-    // ត្រួតពិនិត្យការចុចអនុម័តពី Telegram Bot ដោយស្វ័យប្រវត្តិ
     let lastUpdateId = 0;
     async function checkTelegramUpdates() {
       try {
@@ -356,7 +349,6 @@
       lucide.createIcons();
     }
 
-    // Video Player
     const modal = document.getElementById('videoModal');
     const video = document.getElementById('mainVideo');
     const videoSource = document.getElementById('videoSource');
@@ -367,7 +359,6 @@
       currentMovie = movies.find(m => m.id === movieId);
       if (!currentMovie) return;
 
-      // ត្រួតពិនិត្យម្តងទៀតមុនពេលចាក់
       if (!isMovieUnlocked(currentMovie)) {
         closePlayer();
         showPayModal(currentMovie);
@@ -383,7 +374,6 @@
     }
 
     function playEpisode(index) {
-      // ត្រួតពិនិត្យរាល់ពេលប្តូរភាគ
       if (!currentMovie || !isMovieUnlocked(currentMovie)) {
         closePlayer();
         showPayModal(currentMovie);
