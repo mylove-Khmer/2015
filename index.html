@@ -14,7 +14,7 @@
 </head>
 <body class="text-white pb-24 select-none font-sans">
 
-  <!-- Navbar (គ្មានកាបូបលុយទេ) -->
+  <!-- Navbar -->
   <header class="fixed top-0 inset-x-0 h-16 bg-black/60 backdrop-blur-md z-40 flex items-center justify-between px-4 md:px-8 border-b border-white/5">
     <div class="flex items-center gap-3">
       <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">A</div>
@@ -79,34 +79,34 @@
     </div>
   </div>
 
-  <!-- Modal ស្កេន KHQR (លោតភ្លាមៗពេលភ្ញៀវចុចលើរឿង) -->
-  <div id="qrPayModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 max-w-sm w-full relative shadow-2xl text-center">
-      <button onclick="closeQrModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
+  <!-- Modal ស្កេន KHQR (ផ្ទាំងធំ & រូប QR ធំច្បាស់) -->
+  <div id="qrPayModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 md:p-7 max-w-md w-full relative shadow-2xl text-center my-auto">
+      <button onclick="closeQrModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white bg-neutral-800/80 p-1.5 rounded-full">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <h3 class="text-base font-bold text-white mb-1">ស្កេន KHQR ដើម្បីទស្សនា</h3>
+      <h3 class="text-lg font-black text-white mb-1">ស្កេន KHQR ដើម្បីទស្សនា</h3>
       <p id="qrMovieNotice" class="text-xs text-amber-400 mb-3 font-semibold">រឿង៖ បណ្តាសាក្រៅ ២ ($2.50)</p>
 
-      <!-- រូប QR Code របស់អ្នក -->
-      <div class="bg-white p-2 rounded-2xl inline-block mb-3 border-2 border-red-600 shadow-lg">
-        <img id="guestKhqrImg" src="khqr.png" class="w-44 h-44 object-contain mx-auto" />
+      <!-- រូប QR Code ទំហំធំ ច្បាស់ល្អ -->
+      <div class="bg-white p-3 rounded-2xl inline-block mb-4 border-2 border-red-500 shadow-2xl max-w-[280px] md:max-w-[320px] w-full">
+        <img id="guestKhqrImg" src="khqr.png" class="w-full h-auto object-contain mx-auto rounded-xl" />
       </div>
 
       <!-- Form ផ្ញើ Slip ទៅ Telegram Bot -->
       <form id="slipForm" class="space-y-3 text-left">
         <div>
-          <label class="text-[11px] text-neutral-400 block mb-1">តម្លៃត្រូវបង់ ($)៖</label>
-          <input type="text" id="slipAmount" readonly class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-xs font-bold text-amber-400 cursor-not-allowed">
+          <label class="text-xs text-neutral-300 block mb-1">តម្លៃត្រូវបង់ ($)៖</label>
+          <input type="text" id="slipAmount" readonly class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-2.5 text-sm font-bold text-amber-400 cursor-not-allowed">
         </div>
 
         <div>
-          <label class="text-[11px] text-neutral-400 block mb-1">ជ្រើសរើសរូបថតវិក្កយបត្រ (Slip)៖</label>
-          <input type="file" id="slipFileInput" accept="image/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-1.5 text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
+          <label class="text-xs text-neutral-300 block mb-1">ជ្រើសរើសរូបថតវិក្កយបត្រ (Slip)៖</label>
+          <input type="file" id="slipFileInput" accept="image/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-2 text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
         </div>
 
-        <button type="submit" id="sendSlipBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2.5 rounded-xl transition active:scale-98 flex items-center justify-center gap-1.5 text-xs">
+        <button type="submit" id="sendSlipBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition active:scale-98 flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/20">
           <i data-lucide="send"></i> ផ្ញើវិក្កយបត្រទៅកាន់អេតមីន
         </button>
       </form>
@@ -177,13 +177,11 @@
       const movie = movies.find(m => m.id === movieId);
       if (!movie) return;
 
-      // បើរឿងទិញរួច ឬ Free -> បើកមើលភ្លាម
       if (isMovieUnlocked(movie)) {
         openPlayer(movieId, 0);
         return;
       }
 
-      // បើមិនទាន់ទិញ -> លោតផ្ទាំង KHQR ភ្លាមៗ
       selectedMovieToPay = movie;
       const price = parseMoviePrice(movie.price);
 
@@ -252,7 +250,7 @@
       }
     });
 
-    // ត្រួតពិនិត្យការចុចពី Telegram Bot ដោយស្វ័យប្រវត្តិ
+    // ត្រួតពិនិត្យការចុចពី Telegram Bot
     let lastUpdateId = 0;
     async function checkTelegramUpdates() {
       try {
