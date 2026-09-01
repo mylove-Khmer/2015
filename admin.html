@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Angkor DC - Admin Panel (គ្រប់គ្រងរឿងភាគ)</title>
+  <title>Angkor DC - Admin Panel (គ្រប់គ្រងរឿងភាគ & QR Code)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>body { background-color: #0b0b0e; }</style>
@@ -14,11 +14,30 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
       <h1 class="text-xl md:text-2xl font-black text-amber-400 flex items-center gap-2">
-        <i data-lucide="film"></i> Admin (គ្រប់គ្រងរឿងភាគ & វីដេអូ)
+        <i data-lucide="shield-check"></i> Admin (គ្រប់គ្រង Website & KHQR)
       </h1>
       <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg border border-neutral-700">
         ទំព័រភ្ញៀវ ↗
       </a>
+    </div>
+
+    <!-- ផ្នែក Upload រូប KHQR ផ្ទាល់ខ្លួន -->
+    <div class="bg-neutral-900 border border-amber-500/30 rounded-2xl p-5 mb-8 shadow-xl">
+      <h2 class="text-base font-bold mb-3 flex items-center gap-2 text-amber-400">
+        <i data-lucide="qr-code"></i> កំណត់រូបភាព KHQR ទទួលប្រាក់ផ្ទាល់ខ្លួន
+      </h2>
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <div class="w-32 h-32 bg-white rounded-2xl p-2 border-2 border-amber-500 flex items-center justify-center shrink-0">
+          <img id="currentQrPreview" src="" alt="KHQR" class="w-full h-full object-contain">
+        </div>
+        <div class="flex-1 w-full space-y-3">
+          <p class="text-xs text-neutral-400">ជ្រើសរើសរូបភាព KHQR ធនាគាររបស់អ្នក (ABA / ACLEDA / Bakong) ដើម្បីឱ្យភ្ញៀវស្កេនបង់លុយ៖</p>
+          <input type="file" id="qrFileInput" accept="image/*" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
+          <button type="button" id="saveQrBtn" onclick="uploadQrCode()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2">
+            <i data-lucide="save"></i> រក្សាទុករូបភាព KHQR ថ្មី
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Form បង្កើតរឿងថ្មី -->
@@ -54,7 +73,7 @@
       </form>
     </div>
 
-    <!-- បញ្ជីរឿង & ប៊ូតុងបន្ថែមភាគ -->
+    <!-- បញ្ជីរឿង & បន្ថែមភាគ -->
     <h2 class="text-base font-bold mb-3">បញ្ជីរឿងទាំងអស់ និងការគ្រប់គ្រងភាគ</h2>
     <div id="movieList" class="space-y-4"></div>
 
@@ -89,29 +108,12 @@
   <script>
     const CLOUD_NAME = "slntwp4h";
     const UPLOAD_PRESET = "my_preset";
+    const DEFAULT_QR = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=KHQR_PAYMENT_ANGKORDC";
 
-    const defaultMovies = [
-      {
-        id: '1',
-        title: 'បណ្តាសាក្រៅ ២',
-        price: '$2.50',
-        cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80',
-        episodes: [
-          { epTitle: 'ភាគ ១', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-          { epTitle: 'ភាគ ២', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
-          { epTitle: 'ភាគ ៣ (ចប់)', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }
-        ]
-      }
-    ];
-
-    function getMovies() {
-      const data = localStorage.getItem('angkor_movies');
-      return data ? JSON.parse(data) : defaultMovies;
-    }
-
-    function saveMovies(movies) {
-      localStorage.setItem('angkor_movies', JSON.stringify(movies));
-      renderList();
+    // បង្ហាញរូប QR បច្ចុប្បន្ន
+    function loadCurrentQr() {
+      const savedQr = localStorage.getItem('angkor_khqr_image') || DEFAULT_QR;
+      document.getElementById('currentQrPreview').src = savedQr;
     }
 
     async function uploadToCloud(file, resourceType) {
@@ -125,6 +127,53 @@
       const data = await res.json();
       if (!data.secure_url) throw new Error('Upload Failed');
       return data.secure_url;
+    }
+
+    // Upload រូបភាព KHQR ថ្មី
+    async function uploadQrCode() {
+      const fileInput = document.getElementById('qrFileInput');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('សូមជ្រើសរើសរូបភាព KHQR ជាមុនសិន!');
+        return;
+      }
+      const btn = document.getElementById('saveQrBtn');
+      btn.disabled = true;
+      btn.innerHTML = `កំពុងរក្សាទុក...`;
+
+      try {
+        const qrUrl = await uploadToCloud(fileInput.files[0], 'image');
+        localStorage.setItem('angkor_khqr_image', qrUrl);
+        document.getElementById('currentQrPreview').src = qrUrl;
+        alert('រូបភាព KHQR ត្រូវបានផ្លាស់ប្តូរ និងរក្សាទុកជោគជ័យ!');
+      } catch (e) {
+        alert('Upload រូប KHQR បរាជ័យ សូមព្យាយាមម្តងទៀត');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="save"></i> រក្សាទុករូបភាព KHQR ថ្មី`;
+        lucide.createIcons();
+      }
+    }
+
+    const defaultMovies = [
+      {
+        id: '1',
+        title: 'បណ្តាសាក្រៅ ២',
+        price: '$2.50',
+        cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80',
+        episodes: [
+          { epTitle: 'ភាគ ១', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
+        ]
+      }
+    ];
+
+    function getMovies() {
+      const data = localStorage.getItem('angkor_movies');
+      return data ? JSON.parse(data) : defaultMovies;
+    }
+
+    function saveMovies(movies) {
+      localStorage.setItem('angkor_movies', JSON.stringify(movies));
+      renderList();
     }
 
     function renderList() {
@@ -156,7 +205,6 @@
             </div>
           </div>
 
-          <!-- បញ្ជីភាគនៃរឿងនីមួយៗ -->
           <div class="mt-3">
             <p class="text-xs text-neutral-400 mb-2 font-medium">ភាគដែលមានស្រាប់៖</p>
             <div class="flex flex-wrap gap-2">
@@ -175,7 +223,6 @@
       lucide.createIcons();
     }
 
-    // បង្កើតរឿងថ្មី
     document.getElementById('createMovieForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('createBtn');
@@ -213,7 +260,6 @@
       }
     });
 
-    // បន្ថែមភាគថ្មី
     function openEpModal(id, title, nextEpNum) {
       document.getElementById('modalMovieId').value = id;
       document.getElementById('modalMovieTitle').innerText = `បន្ថែមភាគសម្រាប់៖ ${title}`;
@@ -276,6 +322,7 @@
       }
     }
 
+    loadCurrentQr();
     renderList();
   </script>
 </body>
