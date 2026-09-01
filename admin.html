@@ -3,58 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Angkor DC - Cloud Studio</title>
+  <title>Angkor DC - Cloud Studio Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <style> body { font-family: 'Kantumruy Pro', sans-serif; background-color: #0b0b0f; } </style>
-  
+  <style>
+    body { font-family: 'Kantumruy Pro', sans-serif; background-color: #0b0b0f; }
+  </style>
+
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="text-white p-4 md:p-10 select-none">
-  <div class="max-w-3xl mx-auto space-y-6">
+<body class="text-white p-4 md:p-8 select-none">
+  <div class="max-w-4xl mx-auto space-y-6">
     
-    <header class="flex justify-between items-center bg-neutral-900 border border-neutral-800 p-5 rounded-2xl shadow-xl">
+    <!-- Top Header -->
+    <header class="flex justify-between items-center bg-neutral-900/90 border border-neutral-800 p-4 md:p-5 rounded-2xl backdrop-blur-md shadow-xl">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-500 text-black font-black flex items-center justify-center text-xl">A</div>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-xl shadow-lg shadow-amber-500/20">A</div>
         <div>
-          <h1 class="text-lg font-bold text-amber-400">ផ្ទាំងគ្រប់គ្រងភាពយន្ត (Auto-Sync)</h1>
-          <p class="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ភ្ជាប់ជាមួយ Google Firebase រួចរាល់
+          <h1 class="text-lg md:text-xl font-bold text-amber-400 leading-none">ផ្ទាំងគ្រប់គ្រងភាពយន្ត</h1>
+          <p class="text-[11px] text-emerald-400 mt-1 font-semibold flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Firebase Cloud Connected
           </p>
         </div>
       </div>
-      <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-4 py-2.5 rounded-xl border border-neutral-700 transition">មើល Website</a>
+      <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-4 py-2.5 rounded-xl border border-neutral-700 font-semibold transition flex items-center gap-1.5 shadow-sm">
+        <span>ទំព័រមុខ Website</span>
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+      </a>
     </header>
 
-    <!-- Form បញ្ចូលរឿង -->
-    <section class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-xl space-y-4">
-      <h2 class="text-base font-bold text-white border-b border-neutral-800 pb-3 flex items-center gap-2">
-        <i data-lucide="plus-circle" class="text-amber-400 w-5 h-5"></i> បញ្ចូលរឿងថ្មី (ដាក់រូបភាព និងវីដេអូ)
-      </h2>
+    <!-- Form បង្កើត/កែប្រែរឿង -->
+    <section class="bg-neutral-900/90 border border-neutral-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
+      <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
+        <h2 id="formHeader" class="text-base font-bold flex items-center gap-2 text-white">
+          <i data-lucide="plus-circle" class="text-amber-400 w-5 h-5"></i>
+          <span>បញ្ចូលភាពយន្តថ្មី</span>
+        </h2>
+        <button id="cancelEditBtn" onclick="cancelEditMode()" class="hidden text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-3 py-1.5 rounded-xl border border-neutral-700">
+          បោះបង់ការកែប្រែ
+        </button>
+      </div>
 
-      <form id="addMovieForm" class="space-y-4">
+      <form id="movieForm" class="space-y-4">
+        <input type="hidden" id="editDocId" value="">
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="text-xs text-neutral-400 block mb-1 font-medium">ចំណងជើងរឿង *</label>
-            <input type="text" id="title" required placeholder="ឧ. រឿង កូនស្រីមេភូមិ" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none">
+            <label class="text-xs text-neutral-400 block mb-1.5 font-medium">ចំណងជើងរឿង *</label>
+            <input type="text" id="mTitle" required placeholder="ឧ. រឿង កូនស្រីមេភូមិ" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none">
           </div>
           <div>
-            <label class="text-xs text-neutral-400 block mb-1 font-medium">តម្លៃ ($) *</label>
-            <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none">
+            <label class="text-xs text-neutral-400 block mb-1.5 font-medium">តម្លៃ ($) *</label>
+            <input type="text" id="mPrice" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none">
           </div>
         </div>
 
-        <!-- កន្លែងដាក់រូបភាព Poster (File Upload + URL Link) -->
+        <!-- Poster Upload & URL -->
         <div>
-          <label class="text-xs text-neutral-400 block mb-1 font-medium">រូបភាព Poster រឿង (រើស File ឬដាក់ Link) *</label>
+          <label class="text-xs text-neutral-400 block mb-1.5 font-medium">រូបភាព Poster រឿង *</label>
           <div class="flex flex-col sm:flex-row gap-3 items-start">
             <div class="w-full space-y-2">
               <input type="file" id="coverFileInput" accept="image/*" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
-              <input type="url" id="coverUrlInput" placeholder="ឬបិទភ្ជាប់តំណភ្ជាប់រូបភាព (Link URL)" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-xs focus:border-amber-400 focus:outline-none">
+              <input type="url" id="coverUrlInput" placeholder="ឬបិទភ្ជាប់ Link រូបភាព (URL)" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-xs focus:border-amber-400 focus:outline-none">
             </div>
-            <!-- Preview រូប Poster -->
             <div class="w-24 h-32 rounded-xl bg-neutral-800 border border-neutral-700 overflow-hidden shrink-0 flex items-center justify-center">
               <img id="coverPreview" class="w-full h-full object-cover hidden" />
               <span id="noCoverText" class="text-[10px] text-neutral-500 text-center px-1">គ្មានរូប</span>
@@ -62,32 +76,38 @@
           </div>
         </div>
 
-        <!-- កន្លែងដាក់ Link វីដេអូ -->
-        <div>
-          <label class="text-xs text-neutral-400 block mb-1 font-medium">Link វីដេអូ «ភាគ ១» (Direct MP4 ពី Telegram Bot) *</label>
-          <input type="url" id="videoUrl" required placeholder="https://...mp4" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none">
-          
-          <div class="mt-2 flex items-center gap-2">
-            <button type="button" onclick="testPlayVideo()" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-3 py-1.5 rounded-lg border border-neutral-700 flex items-center gap-1">
-              <i data-lucide="play-circle" class="w-3.5 h-3.5 text-amber-400"></i> តេស្តចាក់វីដេអូមើលសិន
+        <!-- Episodes Manager -->
+        <div class="border-t border-neutral-800 pt-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs text-neutral-300 font-bold flex items-center gap-1.5">
+              <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+              <span>បញ្ជីភាគវីដេអូ (Episodes) *</span>
+            </label>
+            <button type="button" onclick="addEpisodeField()" class="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> បន្ថែមភាគ
             </button>
           </div>
 
-          <div id="videoPreviewContainer" class="mt-3 hidden rounded-2xl overflow-hidden border border-neutral-800 bg-black aspect-video max-w-md">
-            <video id="videoPreview" controls class="w-full h-full object-contain"></video>
-          </div>
+          <div id="episodesContainer" class="space-y-3"></div>
         </div>
 
-        <button type="submit" id="saveBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-xl transition active:scale-98 flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/10">
-          <i data-lucide="upload-cloud" class="w-5 h-5"></i> ផ្សាយចេញភ្លាមៗ (ចូល Firebase Database)
+        <!-- Test Player Frame -->
+        <div id="testPlayerContainer" class="mt-3 hidden rounded-2xl overflow-hidden border border-neutral-800 bg-black aspect-video max-w-lg mx-auto">
+          <video id="testVideo" controls class="w-full h-full object-contain"></video>
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-xl transition active:scale-98 flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/20">
+          <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+          <span id="submitBtnText">ផ្សាយទៅកាន់ Website ភ្លាមៗ</span>
         </button>
       </form>
     </section>
 
-    <!-- បញ្ជីរឿង -->
+    <!-- Movie Items List -->
     <section class="space-y-3">
       <h2 class="text-base font-bold flex items-center gap-2">
-        <i data-lucide="film" class="w-4 h-4 text-amber-400"></i> បញ្ជីរឿងក្នុងប្រព័ន្ធ
+        <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
+        <span>បញ្ជីរឿងដែលមានក្នុង Cloud Database</span>
       </h2>
       <div id="movieItems" class="space-y-3"></div>
     </section>
@@ -109,28 +129,33 @@
     const db = firebase.firestore();
 
     let currentCoverData = "";
+    let cachedMovies = [];
 
-    const form = document.getElementById('addMovieForm');
-    const saveBtn = document.getElementById('saveBtn');
+    const movieForm = document.getElementById('movieForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitBtnText = document.getElementById('submitBtnText');
     const movieItems = document.getElementById('movieItems');
     const coverFileInput = document.getElementById('coverFileInput');
     const coverUrlInput = document.getElementById('coverUrlInput');
     const coverPreview = document.getElementById('coverPreview');
     const noCoverText = document.getElementById('noCoverText');
+    const episodesContainer = document.getElementById('episodesContainer');
+    const editDocIdInput = document.getElementById('editDocId');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const formHeader = document.getElementById('formHeader');
 
-    // អាន File រូបភាពចេញពីម៉ាស៊ីន (Compress រូបបន្តិចដើម្បី save ចូល Firestore បានស្រួល)
-    coverFileInput.addEventListener('change', function(e) {
+    // Preview រូប Poster និង Compress
+    coverFileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(evt) {
+        reader.onload = (evt) => {
           const img = new Image();
           img.src = evt.target.result;
-          img.onload = function() {
+          img.onload = () => {
             const canvas = document.createElement('canvas');
-            const maxDim = 600;
-            let w = img.width;
-            let h = img.height;
+            const maxDim = 500;
+            let w = img.width, h = img.height;
             if (w > maxDim || h > maxDim) {
               if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
               else { w = Math.round((w * maxDim) / h); h = maxDim; }
@@ -150,7 +175,7 @@
       }
     });
 
-    coverUrlInput.addEventListener('input', function(e) {
+    coverUrlInput.addEventListener('input', (e) => {
       const url = e.target.value.trim();
       if (url) {
         currentCoverData = url;
@@ -161,12 +186,42 @@
       }
     });
 
-    function testPlayVideo() {
-      const url = document.getElementById('videoUrl').value.trim();
-      const cont = document.getElementById('videoPreviewContainer');
-      const v = document.getElementById('videoPreview');
+    // បន្ថែមជួរភាគវីដេអូ
+    function addEpisodeField(epTitle = '', videoUrl = '') {
+      const div = document.createElement('div');
+      div.className = 'episode-row flex flex-col sm:flex-row gap-2 bg-neutral-800/60 p-2.5 rounded-xl border border-neutral-700/80 items-center';
+      div.innerHTML = `
+        <input type="text" placeholder="ចំណងជើងភាគ (ឧ. ភាគ ១)" value="${epTitle}" required class="ep-title w-full sm:w-1/3 bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-xs focus:border-amber-400 focus:outline-none">
+        <input type="url" placeholder="Direct MP4 Link (Telegram / CDN)" value="${videoUrl}" required class="ep-url w-full sm:w-7/12 bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-xs focus:border-amber-400 focus:outline-none">
+        <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end">
+          <button type="button" onclick="testPlayDirect(this)" class="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-amber-400" title="តេស្តចាក់">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i>
+          </button>
+          <button type="button" onclick="removeEpisodeField(this)" class="p-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg transition" title="លុបភាគ">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `;
+      episodesContainer.appendChild(div);
+      lucide.createIcons();
+    }
+
+    function removeEpisodeField(btn) {
+      const rows = document.querySelectorAll('.episode-row');
+      if (rows.length <= 1) {
+        alert('ត្រូវតែមានវីដេអូយ៉ាងហោចណាស់ ១ ភាគ!');
+        return;
+      }
+      btn.closest('.episode-row').remove();
+    }
+
+    function testPlayDirect(btn) {
+      const row = btn.closest('.episode-row');
+      const url = row.querySelector('.ep-url').value.trim();
+      const cont = document.getElementById('testPlayerContainer');
+      const v = document.getElementById('testVideo');
       if (!url) {
-        alert('សូមបិទភ្ជាប់តំណភ្ជាប់វីដេអូជាមុនសិន!');
+        alert('សូមបិទភ្ជាប់ Link វីដេអូសិន!');
         return;
       }
       cont.classList.remove('hidden');
@@ -175,8 +230,9 @@
       v.play().catch(e => console.log(e));
     }
 
-    // ទាញទិន្នន័យពី Firebase
+    // អានទិន្នន័យពី Firebase Realtime
     db.collection("movies").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+      cachedMovies = [];
       let html = "";
       if (snapshot.empty) {
         movieItems.innerHTML = `<div class="p-6 text-center text-xs text-neutral-500 bg-neutral-900 rounded-2xl border border-neutral-800">មិនទាន់មានរឿងនៅក្នុងប្រព័ន្ធទេ។</div>`;
@@ -184,19 +240,28 @@
       }
 
       snapshot.forEach((doc) => {
-        const m = doc.data();
+        const m = { id: doc.id, ...doc.data() };
+        cachedMovies.push(m);
         html += `
-          <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 flex items-center justify-between gap-4">
+          <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-              <img src="${m.cover}" class="w-12 h-16 object-cover rounded-xl bg-neutral-800 border border-neutral-700" />
+              <img src="${m.cover}" class="w-14 h-20 object-cover rounded-xl bg-neutral-800 border border-neutral-700" />
               <div>
                 <h4 class="text-sm font-bold text-white">${m.title}</h4>
-                <span class="text-[10px] bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/20">${m.price}</span>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-[10px] bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/20">${m.price}</span>
+                  <span class="text-[10px] text-neutral-400 font-semibold">${m.episodes ? m.episodes.length : 1} ភាគ</span>
+                </div>
               </div>
             </div>
-            <button onclick="deleteMovie('${doc.id}')" class="text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold border border-red-500/20 transition">
-              លុប
-            </button>
+            <div class="flex items-center gap-2 justify-end">
+              <button onclick="startEditMovie('${m.id}')" class="text-xs bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black px-3 py-2 rounded-xl font-bold border border-amber-500/20 transition flex items-center gap-1">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> កែប្រែ
+              </button>
+              <button onclick="deleteMovie('${m.id}')" class="text-xs bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-2 rounded-xl font-bold border border-red-500/20 transition flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> លុប
+              </button>
+            </div>
           </div>
         `;
       });
@@ -204,49 +269,110 @@
       lucide.createIcons();
     });
 
-    form.addEventListener('submit', async (e) => {
+    // បញ្ចូល ឬ កែប្រែរឿង
+    movieForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentCoverData) {
         alert('សូមជ្រើសរើសរូបភាព Poster ឬដាក់ Link រូបភាពជាមុនសិន!');
         return;
       }
 
-      saveBtn.disabled = true;
-      saveBtn.innerText = "កំពុងផ្សាយទៅ Cloud...";
+      const epRows = document.querySelectorAll('.episode-row');
+      const episodes = [];
+      epRows.forEach(row => {
+        const t = row.querySelector('.ep-title').value.trim();
+        const u = row.querySelector('.ep-url').value.trim();
+        if (t && u) episodes.push({ epTitle: t, videoUrl: u });
+      });
+
+      if (episodes.length === 0) {
+        alert('សូមបញ្ចូលព័ត៌មានភាគវីដេអូឱ្យបានត្រឹមត្រូវ!');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "កំពុងរក្សាទុក...";
+
+      const moviePayload = {
+        title: document.getElementById('mTitle').value.trim(),
+        price: document.getElementById('mPrice').value.trim(),
+        cover: currentCoverData,
+        episodes: episodes,
+        createdAt: Date.now()
+      };
 
       try {
-        await db.collection("movies").add({
-          title: document.getElementById('title').value.trim(),
-          price: document.getElementById('price').value.trim(),
-          cover: currentCoverData,
-          episodes: [{ epTitle: "ភាគ ១", videoUrl: document.getElementById('videoUrl').value.trim() }],
-          createdAt: Date.now()
-        });
-
-        form.reset();
-        currentCoverData = "";
-        coverPreview.src = "";
-        coverPreview.classList.add('hidden');
-        noCoverText.classList.remove('hidden');
-        document.getElementById('videoPreviewContainer').classList.add('hidden');
-        document.getElementById('videoPreview').pause();
-
-        alert("🎉 ជោគជ័យ! រឿងត្រូវបានផ្សាយទៅលើ Website ភ្លាមៗ។");
+        const editId = editDocIdInput.value;
+        if (editId) {
+          delete moviePayload.createdAt;
+          await db.collection("movies").doc(editId).update(moviePayload);
+          alert("🎉 បានធ្វើបច្ចុប្បន្នភាពភាពយន្តជោគជ័យ!");
+        } else {
+          await db.collection("movies").add(moviePayload);
+          alert("🎉 បានបញ្ចូលភាពយន្តថ្មីចូល Cloud ជោគជ័យ!");
+        }
+        cancelEditMode();
       } catch (err) {
-        alert("បរាជ័យ៖ " + err.message);
+        alert("កំហុស៖ " + err.message);
       } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = `<i data-lucide="upload-cloud" class="w-5 h-5"></i> ផ្សាយចេញភ្លាមៗ (ចូល Firebase Database)`;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="upload-cloud" class="w-5 h-5"></i> <span>${editDocIdInput.value ? 'រក្សាទុកការកែប្រែ' : 'ផ្សាយទៅកាន់ Website ភ្លាមៗ'}</span>`;
         lucide.createIcons();
       }
     });
 
+    window.startEditMovie = (id) => {
+      const m = cachedMovies.find(item => item.id === id);
+      if (!m) return;
+
+      editDocIdInput.value = m.id;
+      document.getElementById('mTitle').value = m.title;
+      document.getElementById('mPrice').value = m.price;
+      currentCoverData = m.cover;
+      coverPreview.src = m.cover;
+      coverPreview.classList.remove('hidden');
+      noCoverText.classList.add('hidden');
+
+      episodesContainer.innerHTML = '';
+      if (m.episodes && m.episodes.length > 0) {
+        m.episodes.forEach(ep => addEpisodeField(ep.epTitle, ep.videoUrl));
+      } else {
+        addEpisodeField('ភាគ ១', '');
+      }
+
+      formHeader.innerHTML = `<i data-lucide="edit-3" class="text-amber-400 w-5 h-5"></i> <span>កែប្រែរឿង៖ ${m.title}</span>`;
+      submitBtnText.innerText = "រក្សាទុកការកែប្រែ";
+      cancelEditBtn.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    };
+
+    window.cancelEditMode = () => {
+      editDocIdInput.value = '';
+      movieForm.reset();
+      currentCoverData = '';
+      coverPreview.src = '';
+      coverPreview.classList.add('hidden');
+      noCoverText.classList.remove('hidden');
+      document.getElementById('testPlayerContainer').classList.add('hidden');
+      document.getElementById('testVideo').pause();
+
+      episodesContainer.innerHTML = '';
+      addEpisodeField('ភាគ ១', '');
+
+      formHeader.innerHTML = `<i data-lucide="plus-circle" class="text-amber-400 w-5 h-5"></i> <span>បញ្ចូលភាពយន្តថ្មី</span>`;
+      submitBtnText.innerText = "ផ្សាយទៅកាន់ Website ភ្លាមៗ";
+      cancelEditBtn.classList.add('hidden');
+      lucide.createIcons();
+    };
+
     window.deleteMovie = async (id) => {
-      if (confirm("តើអ្នកពិតជាចង់លុបរឿងនេះមែនទេ?")) {
+      if (confirm("តើអ្នកពិតជាចង់លុបរឿងនេះចេញពីប្រព័ន្ធមែនទេ?")) {
         await db.collection("movies").doc(id).delete();
       }
     };
 
+    addEpisodeField('ភាគ ១', '');
     lucide.createIcons();
   </script>
 </body>
