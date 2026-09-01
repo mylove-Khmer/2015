@@ -13,7 +13,7 @@
     
     <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
       <h1 class="text-xl md:text-2xl font-black text-amber-400 flex items-center gap-2">
-        <i data-lucide="shield-check"></i> Admin (ដាក់វីដេអូសម្រាប់ Phone & PC)
+        <i data-lucide="shield-check"></i> Admin (បញ្ចូលវីដេអូផ្ទាល់)
       </h1>
       <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg border border-neutral-700">
         ទំព័រភ្ញៀវ ↗
@@ -23,11 +23,11 @@
     <!-- Form បញ្ចូល -->
     <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 mb-8 shadow-xl">
       <h2 class="text-base font-bold mb-4 flex items-center gap-2 text-white">
-        <i data-lucide="plus-circle" class="text-amber-400"></i> បញ្ចូលរឿងថ្មី
+        <i data-lucide="plus-circle" class="text-amber-400"></i> បញ្ចូលវីដេអូថ្មី
       </h2>
       <form id="movieForm" class="space-y-4">
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង (ជាភាសាខ្មែរ)</label>
+          <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង (ភាសាខ្មែរ)</label>
           <input type="text" id="title" required placeholder="ឧ. បណ្តាសាក្រៅ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
         </div>
 
@@ -37,18 +37,17 @@
         </div>
 
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">Link រូបភាព Poster (URL)</label>
-          <input type="url" id="cover" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+          <label class="text-xs text-neutral-400 block mb-1">ជ្រើសរើសរូប Poster ពីរូបភាពក្នុងម៉ាស៊ីន</label>
+          <input type="file" id="coverFile" accept="image/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
         </div>
 
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">Link វីដេអូ (.mp4 URL)</label>
-          <input type="url" id="videoUrl" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
-          <p class="text-[11px] text-neutral-500 mt-1">ឧទាហរណ៍៖ https://mylove-khmer.github.io/2015/video1.mp4</p>
+          <label class="text-xs text-neutral-400 block mb-1">ជ្រើសរើសឯកសារវីដេអូ (.mp4)</label>
+          <input type="file" id="videoFile" accept="video/mp4,video/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
         </div>
 
-        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
-          <i data-lucide="upload-cloud"></i> រក្សាទុក និងដាក់ឱ្យមើល
+        <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
+          <i data-lucide="upload-cloud"></i> បញ្ចូល និងរក្សាទុក
         </button>
       </form>
     </div>
@@ -62,6 +61,10 @@
   </div>
 
   <script>
+    // ភ្ជាប់ព័ត៌មាន Cloudinary របស់អ្នក
+    const CLOUD_NAME = "slntwp4h"; 
+    const UPLOAD_PRESET = "my_preset";
+
     const defaultMovies = [
       { id: '1', title: 'បណ្តាសាក្រៅ ២', price: '$2.50', cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
     ];
@@ -107,20 +110,55 @@
       }
     }
 
-    document.getElementById('movieForm').addEventListener('submit', (e) => {
+    // Function Upload ឯកសារឡើង Cloudinary
+    async function uploadToCloud(file, resourceType) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (!data.secure_url) {
+        throw new Error('Upload Failed');
+      }
+      return data.secure_url;
+    }
+
+    document.getElementById('movieForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const list = getMovies();
-      const newMovie = {
-        id: Date.now().toString(),
-        title: document.getElementById('title').value,
-        price: document.getElementById('price').value,
-        cover: document.getElementById('cover').value,
-        videoUrl: document.getElementById('videoUrl').value
-      };
-      list.unshift(newMovie);
-      saveMovies(list);
-      e.target.reset();
-      alert('បានដាក់បញ្ចាំងវីដេអូជោគជ័យ!');
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin mr-2">⏳</span> កំពុង Upload វីដេអូ សូមរង់ចាំ...`;
+
+      try {
+        const coverFile = document.getElementById('coverFile').files[0];
+        const videoFile = document.getElementById('videoFile').files[0];
+
+        const coverUrl = await uploadToCloud(coverFile, 'image');
+        const videoUrl = await uploadToCloud(videoFile, 'video');
+
+        const list = getMovies();
+        const newMovie = {
+          id: Date.now().toString(),
+          title: document.getElementById('title').value,
+          price: document.getElementById('price').value,
+          cover: coverUrl,
+          videoUrl: videoUrl
+        };
+
+        list.unshift(newMovie);
+        saveMovies(list);
+        e.target.reset();
+        alert('បានបញ្ចូលវីដេអូជោគជ័យ!');
+      } catch (err) {
+        alert('មានបញ្ហាក្នុងការ Upload សូមពិនិត្យមើលទំហំឯកសារ ឬល្បឿនអ៊ីនធឺណិត');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="upload-cloud"></i> បញ្ចូល និងរក្សាទុក`;
+        lucide.createIcons();
+      }
     });
 
     renderList();
