@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angkor DC - Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>body { background-color: #0b0b0e; }</style>
+</head>
+<body class="text-white p-6 md:p-12 font-sans">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8 border-b border-neutral-800 pb-4">
+      <h1 class="text-2xl font-black text-amber-400 flex items-center gap-2">
+        <i data-lucide="shield-alert"></i> Admin Dashboard (គ្រប់គ្រងវីដេអូ)
+      </h1>
+      <a href="index.html" target="_blank" class="text-sm bg-neutral-800 hover:bg-neutral-700 px-4 py-2 rounded-lg border border-neutral-700">
+        មើលទំព័រភ្ញៀវ ↗
+      </a>
+    </div>
+
+    <!-- Form បញ្ចូលវីដេអូ -->
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 mb-10 shadow-xl">
+      <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-white">
+        <i data-lucide="plus-circle" class="text-amber-400"></i> បញ្ចូលវីដេអូថ្មី
+      </h2>
+      <form id="movieForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង</label>
+          <input type="text" id="title" required placeholder="ឧ. បណ្តាសាក្រៅ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">តម្លៃ ($)</label>
+          <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">Link រូបភាព Cover (Poster URL)</label>
+          <input type="url" id="cover" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-neutral-400 block mb-1">Link វីដេអូ (MP4/HLS URL)</label>
+          <input type="url" id="videoUrl" required placeholder="https://..." class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+        </div>
+        <div class="md:col-span-2 mt-2">
+          <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-lg transition active:scale-98">
+            រក្សាទុក និងដាក់បង្ហាញ
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- តារាងបញ្ជីភាពយន្ត និងប៊ូតុងលុប -->
+    <h2 class="text-lg font-bold mb-4">បញ្ជីភាពយន្តកំពុងដំណើរការ</h2>
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
+      <div id="movieTable" class="divide-y divide-neutral-800">
+        <!-- Movies List Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ទិន្នន័យដើម Default
+    const defaultMovies = [
+      { id: '1', title: 'បណ្តាសាក្រៅ ២', price: '$2.50', cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+      { id: '2', title: 'ស្នេហា Private', price: 'Free', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' }
+    ];
+
+    function getMovies() {
+      const data = localStorage.getItem('angkor_movies');
+      return data ? JSON.parse(data) : defaultMovies;
+    }
+
+    function saveMovies(movies) {
+      localStorage.setItem('angkor_movies', JSON.stringify(movies));
+      renderList();
+    }
+
+    function renderList() {
+      const list = getMovies();
+      const container = document.getElementById('movieTable');
+      if (list.length === 0) {
+        container.innerHTML = `<p class="p-6 text-center text-neutral-500 text-sm">មិនទាន់មានវីដេអូនៅឡើយទេ។</p>`;
+        return;
+      }
+      container.innerHTML = list.map(m => `
+        <div class="flex items-center justify-between p-4 hover:bg-neutral-800/40 transition">
+          <div class="flex items-center gap-4">
+            <img src="${m.cover}" class="w-12 h-16 object-cover rounded-lg bg-neutral-800" />
+            <div>
+              <p class="font-bold text-sm text-white">${m.title}</p>
+              <span class="inline-block mt-1 text-xs bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/20">${m.price}</span>
+            </div>
+          </div>
+          <button onclick="deleteMovie('${m.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> ដកចេញ
+          </button>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function deleteMovie(id) {
+      if (confirm('តើអ្នកពិតជាចង់ដកវីដេអូនេះចោលមែនទេ?')) {
+        const list = getMovies().filter(m => m.id !== id);
+        saveMovies(list);
+      }
+    }
+
+    document.getElementById('movieForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const list = getMovies();
+      const newMovie = {
+        id: Date.now().toString(),
+        title: document.getElementById('title').value,
+        price: document.getElementById('price').value,
+        cover: document.getElementById('cover').value,
+        videoUrl: document.getElementById('videoUrl').value
+      };
+      list.unshift(newMovie);
+      saveMovies(list);
+      e.target.reset();
+    });
+
+    renderList();
+  </script>
+</body>
+</html>
