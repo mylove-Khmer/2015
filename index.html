@@ -90,7 +90,7 @@
     </div>
   </div>
 
-  <!-- Modal ស្កេន KHQR & Upload Slip ផ្ញើទៅ Bot -->
+  <!-- Modal ស្កេន KHQR & Upload Slip -->
   <div id="topUpModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 max-w-sm w-full relative shadow-2xl text-center">
       <button onclick="closeTopUpModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
@@ -100,12 +100,10 @@
       <h3 class="text-base font-bold text-white mb-1">ស្កេន KHQR បង់ប្រាក់</h3>
       <p class="text-xs text-neutral-400 mb-3">ស្កេនរួច សូមដាក់រូបវិក្កយបត្រ (Slip) ខាងក្រោម</p>
 
-      <!-- រូប QR Code -->
       <div class="bg-white p-2 rounded-2xl inline-block mb-3 border-2 border-red-600">
         <img id="guestKhqrImg" src="" class="w-36 h-36 object-contain mx-auto" />
       </div>
 
-      <!-- Form បញ្ចូល Slip ផ្ញើទៅ Bot -->
       <form id="slipForm" class="space-y-3 text-left">
         <div>
           <label class="text-[11px] text-neutral-400 block mb-1">ចំនួនទឹកប្រាក់ដែលបានបាញ់ ($)៖</label>
@@ -125,10 +123,8 @@
   </div>
 
   <script>
-    // ព័ត៌មាន Bot Token & Chat ID របស់អ្នក
     const TELEGRAM_BOT_TOKEN = "8870525233:AAEMYx2LPfOTgc5CZoC8Q2wVhvIxKeXjt00";
     const TELEGRAM_CHAT_ID = "5915683588";
-
     const DEFAULT_QR = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=KHQR_PAYMENT_ANGKORDC";
 
     function getUserId() {
@@ -156,7 +152,7 @@
       document.getElementById('userBalanceDisplay').innerText = `$${getBalance().toFixed(2)}`;
     }
 
-    // ផ្ញើ Slip ទៅកាន់ Telegram Bot របស់ Admin
+    // ផ្ញើស្លីបទៅកាន់ Telegram
     document.getElementById('slipForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('sendSlipBtn');
@@ -165,7 +161,7 @@
       const uid = getUserId();
 
       btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-1">⏳</span> កំពុងផ្ញើទៅកាន់ Bot...`;
+      btn.innerHTML = `<span class="animate-spin mr-1">⏳</span> កំពុងផ្ញើ...`;
 
       try {
         const formData = new FormData();
@@ -191,20 +187,83 @@
 
         const data = await res.json();
         if (data.ok) {
-          alert('វិក្កយបត្រត្រូវបានផ្ញើជូន Admin ជោគជ័យ! សូមរង់ចាំ Admin ពិនិត្យ និងអនុម័ត។');
+          alert('វិក្កយបត្រត្រូវបានផ្ញើជោគជ័យ! សូមរង់ចាំ Admin ចុច Approve ក្នុង Telegram។');
           closeTopUpModal();
           document.getElementById('slipForm').reset();
         } else {
-          alert('មានបញ្ហាក្នុងការផ្ញើ សូមចុច Start Bot របស់អ្នកជាមុនសិន');
+          alert('មានបញ្ហាក្នុងការផ្ញើទៅកាន់ Bot');
         }
       } catch (err) {
-        alert('ផ្ញើបរាជ័យ សូមពិនិត្យអ៊ីនធឺណិត');
+        alert('ផ្ញើមិនបានជោគជ័យ សូមពិនិត្យអ៊ីនធឺណិត');
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i data-lucide="send"></i> ផ្ញើវិក្កយបត្រទៅកាន់អេតមីន`;
         lucide.createIcons();
       }
     });
+
+    // ========================================================
+    // ប្រព័ន្ធស្តាប់បញ្ជាពី Telegram Bot ដោយស្វ័យប្រវត្តិ (Auto-Sync)
+    // ========================================================
+    let lastUpdateId = 0;
+    async function checkTelegramUpdates() {
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?offset=${lastUpdateId + 1}`);
+        const data = await res.json();
+        if (data.ok && data.result.length > 0) {
+          for (const update of data.result) {
+            lastUpdateId = update.update_id;
+
+            if (update.callback_query) {
+              const callbackData = update.callback_query.data;
+              const [action, targetUid, amt] = callbackData.split(':');
+              const myUid = getUserId();
+
+              if (targetUid === myUid) {
+                if (action === 'APPROVE') {
+                  const addAmt = parseFloat(amt);
+                  setBalance(getBalance() + addAmt);
+                  
+                  // កែសម្រួលសារក្នុង Telegram ថាបាន Approve
+                  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery?callback_query_id=${update.callback_query.id}&text=បានដាក់លុយជោគជ័យ!`);
+                  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageCaption`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      chat_id: TELEGRAM_CHAT_ID,
+                      message_id: update.callback_query.message.message_id,
+                      caption: `✅ <b>បានដាក់លុយ $${addAmt} ជូន User ${myUid} រួចរាល់!</b>`,
+                      parse_mode: 'HTML'
+                    })
+                  });
+
+                  alert(`🎉 អបអរសាទរ! អេតមីនបានអនុម័តការបញ្ចូលលុយ $${addAmt.toFixed(2)} ចូលក្នុងគណនីរបស់អ្នករួចរាល់ហើយ!`);
+                } else if (action === 'REJECT') {
+                  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery?callback_query_id=${update.callback_query.id}&text=បានបដិសេធ!`);
+                  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageCaption`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      chat_id: TELEGRAM_CHAT_ID,
+                      message_id: update.callback_query.message.message_id,
+                      caption: `❌ <b>បានបោះបង់ការស្នើសុំរបស់ User ${myUid}!</b>`,
+                      parse_mode: 'HTML'
+                    })
+                  });
+
+                  alert(`❌ ការស្នើសុំបញ្ចូលលុយរបស់អ្នកត្រូវបានបដិសេធ។`);
+                }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // Silent catch for background polling
+      }
+    }
+
+    // ដំណើរការត្រួតពិនិត្យរៀងរាល់ 3 វិនាទីម្តង
+    setInterval(checkTelegramUpdates, 3000);
 
     const defaultMovies = [
       { 
@@ -319,7 +378,6 @@
       document.getElementById('topUpModal').classList.remove('flex');
     }
 
-    // Video Player
     const modal = document.getElementById('videoModal');
     const video = document.getElementById('mainVideo');
     const videoSource = document.getElementById('videoSource');
