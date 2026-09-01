@@ -6,97 +6,124 @@
   <title>Angkor DC - Admin Panel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>body { background-color: #0b0b0e; }</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Kantumruy Pro', sans-serif;
+      background-color: #0b0b0f;
+    }
+  </style>
 </head>
-<body class="text-white p-4 md:p-10 font-sans">
-  <div class="max-w-4xl mx-auto">
+<body class="text-white p-4 md:p-10 select-none">
+  <div class="max-w-4xl mx-auto space-y-6">
     
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
-      <h1 class="text-xl md:text-2xl font-black text-amber-400 flex items-center gap-2">
-        <i data-lucide="shield-check"></i> Admin Panel (គ្រប់គ្រងរឿងភាគ)
-      </h1>
-      <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg border border-neutral-700">
-        ទំព័រភ្ញៀវ ↗
+    <!-- Top Header -->
+    <header class="flex justify-between items-center bg-neutral-900/80 border border-neutral-800 p-4 md:p-5 rounded-2xl backdrop-blur-md shadow-xl">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-xl shadow-lg shadow-amber-500/20">A</div>
+        <div>
+          <h1 class="text-lg md:text-xl font-bold text-amber-400 leading-none">Angkor DC Control Panel</h1>
+          <p class="text-[11px] text-neutral-400 mt-1">ផ្ទាំងគ្រប់គ្រងរឿងភាគ & វីដេអូ</p>
+        </div>
+      </div>
+      <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-4 py-2.5 rounded-xl border border-neutral-700 font-semibold transition flex items-center gap-1.5 shadow-sm">
+        <span>ទំព័រមុខ Website</span>
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
       </a>
-    </div>
+    </header>
 
     <!-- Form បង្កើតរឿងថ្មី -->
-    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 mb-6 shadow-xl">
-      <h2 class="text-base font-bold mb-4 flex items-center gap-2 text-white">
-        <i data-lucide="plus-circle" class="text-amber-400"></i> បង្កើតរឿងថ្មី (និងបញ្ចូលភាគទី ១)
+    <section class="bg-neutral-900/90 border border-neutral-800 rounded-2xl p-5 md:p-7 shadow-xl">
+      <h2 class="text-base font-bold mb-5 flex items-center gap-2 text-white border-b border-neutral-800 pb-3">
+        <i data-lucide="plus-circle" class="text-amber-400 w-5 h-5"></i>
+        <span>បង្កើតរឿងថ្មី (រួមជាមួយភាគ ១)</span>
       </h2>
+
       <form id="createMovieForm" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="text-xs text-neutral-400 block mb-1">ចំណងជើងរឿង (ជាភាសាខ្មែរ)</label>
-            <input type="text" id="title" required placeholder="ឧ. បណ្តាសាក្រៅ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+            <label class="text-xs text-neutral-400 block mb-1.5 font-medium">ចំណងជើងរឿង (ភាសាខ្មែរ) *</label>
+            <input type="text" id="title" required placeholder="ឧ. បណ្តាសាក្រៅ ២" class="w-full bg-neutral-800/90 border border-neutral-700/80 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none transition">
           </div>
           <div>
-            <label class="text-xs text-neutral-400 block mb-1">តម្លៃ ($)</label>
-            <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm focus:border-amber-400 focus:outline-none">
+            <label class="text-xs text-neutral-400 block mb-1.5 font-medium">តម្លៃ ($) *</label>
+            <input type="text" id="price" required placeholder="ឧ. $2.50 ឬ Free" class="w-full bg-neutral-800/90 border border-neutral-700/80 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none transition">
           </div>
         </div>
 
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">រូប Poster រឿង (Cover Image)</label>
-          <input type="file" id="coverFile" accept="image/*" required class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
+          <label class="text-xs text-neutral-400 block mb-1.5 font-medium">រូប Poster រឿង (Cover Image) *</label>
+          <input type="file" id="coverFile" accept="image/*" required class="w-full bg-neutral-800/90 border border-neutral-700/80 rounded-xl p-2.5 text-xs text-neutral-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
         </div>
 
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">ឯកសារវីដេអូសម្រាប់ «ភាគ ១» (.mp4)</label>
-          <input type="file" id="firstVideoFile" accept="video/mp4,video/*" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
-          <input type="url" id="firstVideoUrlDirect" placeholder="ឬដាក់ Link វីដេអូផ្ទាល់ https://.../video.mp4" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 mt-1.5 text-xs focus:border-amber-400 focus:outline-none">
+          <label class="text-xs text-neutral-400 block mb-1.5 font-medium">ឯកសារវីដេអូសម្រាប់ «ភាគ ១» (.mp4)</label>
+          <input type="file" id="firstVideoFile" accept="video/mp4,video/*" class="w-full bg-neutral-800/90 border border-neutral-700/80 rounded-xl p-2.5 text-xs text-neutral-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
+          <input type="url" id="firstVideoUrlDirect" placeholder="ឬដាក់ Link វីដេអូផ្ទាល់ https://.../video.mp4 (បើមិនចង់ Upload File)" class="w-full bg-neutral-800/90 border border-neutral-700/80 rounded-xl p-2.5 mt-2 text-xs focus:border-amber-400 focus:outline-none transition">
         </div>
 
-        <button type="submit" id="createBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-lg transition active:scale-98 flex items-center justify-center gap-2">
-          <i data-lucide="upload-cloud"></i> បង្កើតរឿង និង Upload
+        <button type="submit" id="createBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-xl transition active:scale-98 flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/10">
+          <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+          <span>បង្កើតរឿង និង Upload ចូលប្រព័ន្ធ</span>
         </button>
       </form>
-    </div>
+    </section>
 
-    <!-- ប្រអប់ Sync កូដ movies.json ទៅកាន់ GitHub -->
-    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 mb-6">
-      <div class="flex items-center justify-between mb-2">
-        <h3 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-          <i data-lucide="code"></i> កូដទិន្នន័យរួម movies.json (សម្រាប់ដាក់លើ GitHub)
+    <!-- ប្រអប់ Sync JSON ទៅកាន់ GitHub -->
+    <section class="bg-gradient-to-br from-amber-500/10 via-neutral-900 to-neutral-900 border border-amber-500/30 rounded-2xl p-5 shadow-xl">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+          <i data-lucide="code-2" class="w-4 h-4"></i>
+          <span>កូដទិន្នន័យរួម movies.json (សម្រាប់ GitHub)</span>
         </h3>
-        <button onclick="copyJsonCode()" class="bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1">
-          <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy កូដ JSON នេះ
+        <button onclick="copyJsonCode()" class="bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition active:scale-95">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span>Copy កូដ JSON</span>
         </button>
       </div>
-      <textarea id="jsonOutput" readonly class="w-full h-24 bg-black/60 border border-neutral-800 rounded-lg p-2 text-[11px] font-mono text-neutral-300 focus:outline-none"></textarea>
-      <p class="text-[10px] text-neutral-400 mt-1">💡 ពេល Upload រឿងចប់ សូមចុច <b>"Copy កូដ JSON នេះ"</b> រួចយកទៅផាស (Paste) ក្នុង file <code>movies.json</code> លើ GitHub នោះភ្ញៀវគ្រប់គ្នានឹងឃើញរឿងភ្លាមៗ!</p>
-    </div>
+      <textarea id="jsonOutput" readonly class="w-full h-28 bg-black/70 border border-neutral-800 rounded-xl p-3 text-xs font-mono text-neutral-300 focus:outline-none"></textarea>
+      <p class="text-[11px] text-neutral-400 mt-2 flex items-center gap-1.5">
+        <i data-lucide="info" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i>
+        <span>រាល់ពេលបង្កើតរឿង ឬបន្ថែមភាគរួច សូមចុច <b>"Copy កូដ JSON"</b> យកទៅ Paste ក្នុង file <code>movies.json</code> លើ GitHub ដើម្បីឱ្យភ្ញៀវមើលឃើញគ្រប់គ្នា។</span>
+      </p>
+    </section>
 
-    <!-- បញ្ជីរឿង -->
-    <h2 class="text-base font-bold mb-3">បញ្ជីរឿងទាំងអស់</h2>
-    <div id="movieList" class="space-y-4"></div>
+    <!-- បញ្ជីរឿងទាំងអស់ -->
+    <section class="space-y-3">
+      <h2 class="text-base font-bold flex items-center gap-2">
+        <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
+        <span>បញ្ជីរឿងដែលមានស្រាប់</span>
+      </h2>
+      <div id="movieList" class="space-y-4"></div>
+    </section>
 
   </div>
 
-  <!-- Modal បន្ថែមភាគ -->
-  <div id="addEpModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl max-w-md w-full relative shadow-2xl">
-      <button onclick="closeEpModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
+  <!-- Modal បន្ថែមភាគថ្មី -->
+  <div id="addEpModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-3xl max-w-md w-full relative shadow-2xl">
+      <button onclick="closeEpModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white bg-neutral-800 p-1.5 rounded-full">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
-      <h3 class="text-lg font-bold mb-1 text-amber-400" id="modalMovieTitle">បន្ថែមភាគ</h3>
-      <p class="text-xs text-neutral-400 mb-4">ជ្រើសរើស File វីដេអូ ឬដាក់ Link វីដេអូ</p>
+      <h3 class="text-base font-bold text-amber-400 mb-1" id="modalMovieTitle">បន្ថែមភាគថ្មី</h3>
+      <p class="text-xs text-neutral-400 mb-4">បញ្ចូលភាគបន្តបន្ទាប់សម្រាប់រឿងនេះ</p>
 
       <form id="addEpForm" class="space-y-4">
         <input type="hidden" id="modalMovieId">
         <div>
-          <label class="text-xs text-neutral-400 block mb-1">ឈ្មោះភាគ</label>
-          <input type="text" id="epName" required placeholder="ឧ. ភាគ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 text-sm focus:border-amber-400 focus:outline-none">
+          <label class="text-xs text-neutral-400 block mb-1">ឈ្មោះភាគ *</label>
+          <input type="text" id="epName" required placeholder="ឧ. ភាគ ២" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-2.5 text-sm focus:border-amber-400 focus:outline-none">
         </div>
         <div>
           <label class="text-xs text-neutral-400 block mb-1">ឯកសារវីដេអូ (.mp4)</label>
-          <input type="file" id="epVideoFile" accept="video/mp4,video/*" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
-          <input type="url" id="epVideoUrlDirect" placeholder="ឬដាក់ Link វីដេអូ https://.../video.mp4" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2 mt-1.5 text-xs focus:border-amber-400 focus:outline-none">
+          <input type="file" id="epVideoFile" accept="video/mp4,video/*" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-2 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-500 file:text-black file:font-bold cursor-pointer">
+          <input type="url" id="epVideoUrlDirect" placeholder="ឬដាក់ Link វីដេអូ https://.../video.mp4" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-2 mt-2 text-xs focus:border-amber-400 focus:outline-none">
         </div>
-        <button type="submit" id="modalUploadBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2">
-          <i data-lucide="plus"></i> បញ្ចូលភាគថ្មីនេះ
+        <button type="submit" id="modalUploadBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/10">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>បញ្ចូលភាគថ្មីនេះ</span>
         </button>
       </form>
     </div>
@@ -134,7 +161,7 @@
       const textarea = document.getElementById('jsonOutput');
       textarea.select();
       navigator.clipboard.writeText(textarea.value);
-      alert('បាន Copy កូដ JSON ជោគជ័យ! សូមយកទៅ Paste ក្នុង file movies.json លើ GitHub។');
+      alert('✅ បាន Copy កូដ JSON ជោគជ័យ! សូមយកទៅ Paste ក្នុង file movies.json លើ GitHub។');
     }
 
     function uploadToCloudWithProgress(file, resourceType, onProgress) {
@@ -177,33 +204,33 @@
       }
 
       container.innerHTML = movies.map(m => `
-        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-5">
+        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-5 shadow-lg">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
             <div class="flex items-center gap-4">
-              <img src="${m.cover}" class="w-14 h-20 object-cover rounded-xl bg-neutral-800" />
+              <img src="${m.cover}" class="w-16 h-22 object-cover rounded-xl bg-neutral-800 border border-neutral-700" />
               <div>
                 <h3 class="font-bold text-base text-white">${m.title}</h3>
-                <span class="inline-block mt-1 text-xs bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/20">${m.price}</span>
+                <span class="inline-block mt-1 text-xs bg-amber-500/10 text-amber-400 font-bold px-2.5 py-0.5 rounded-lg border border-amber-500/20">${m.price}</span>
                 <p class="text-xs text-neutral-400 mt-1">មានចំនួន៖ <b class="text-white">${m.episodes ? m.episodes.length : 1} ភាគ</b></p>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <button onclick="openEpModal('${m.id}', '${m.title}', ${m.episodes ? m.episodes.length + 1 : 2})" class="bg-amber-500 hover:bg-amber-400 text-black px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+              <button onclick="openEpModal('${m.id}', '${m.title}', ${m.episodes ? m.episodes.length + 1 : 2})" class="bg-amber-500 hover:bg-amber-400 text-black px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i> បន្ថែមភាគថ្មី
               </button>
-              <button onclick="deleteMovie('${m.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1">
+              <button onclick="deleteMovie('${m.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1 border border-red-500/20">
                 <i data-lucide="trash-2" class="w-4 h-4"></i> លុបរឿង
               </button>
             </div>
           </div>
 
-          <div class="mt-3">
-            <p class="text-xs text-neutral-400 mb-2 font-medium">ភាគដែលមានស្រាប់៖</p>
+          <div class="mt-3.5">
+            <p class="text-[11px] text-neutral-400 mb-2 font-medium">ភាគដែលមានស្រាប់៖</p>
             <div class="flex flex-wrap gap-2">
               ${(m.episodes || []).map((ep, idx) => `
-                <div class="bg-neutral-800 border border-neutral-700 text-xs px-3 py-1.5 rounded-lg flex items-center gap-2">
+                <div class="bg-neutral-800 border border-neutral-700 text-xs px-3 py-1.5 rounded-xl flex items-center gap-2">
                   <span>${ep.epTitle}</span>
-                  <button onclick="deleteEpisode('${m.id}', ${idx})" class="text-neutral-500 hover:text-red-400">
+                  <button onclick="deleteEpisode('${m.id}', ${idx})" class="text-neutral-500 hover:text-red-400 transition">
                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -223,14 +250,14 @@
       const directVideoUrl = document.getElementById('firstVideoUrlDirect').value.trim();
 
       if (!videoFile && !directVideoUrl) {
-        alert('សូមជ្រើសរើស File វីដេអូ ឬដាក់ Link វីដេអូ!');
+        alert('សូមជ្រើសរើស File វីដេអូ ឬដាក់ Link វីដេអូ (.mp4)!');
         return;
       }
 
       btn.disabled = true;
 
       try {
-        btn.innerHTML = `កំពុង Upload Poster...`;
+        btn.innerHTML = `កំពុង Upload Poster (0%)...`;
         const coverUrl = await uploadToCloudWithProgress(coverFile, 'image', (p) => {
           btn.innerHTML = `កំពុង Upload Poster (${p}%)...`;
         });
@@ -254,12 +281,12 @@
         movies.unshift(newMovie);
         saveAndRefresh();
         e.target.reset();
-        alert('🎉 បានបង្កើតរឿងជោគជ័យ! សូម Copy កូដ JSON ក្នុងប្រអប់ខាងលើ ទៅដាក់ក្នុង movies.json លើ GitHub។');
+        alert('🎉 បានបង្កើតរឿងជោគជ័យ! សូម Copy កូដ JSON ក្នុងប្រអប់ពណ៌លឿង យកទៅ Paste ក្នុង file movies.json លើ GitHub។');
       } catch (err) {
         alert('មានបញ្ហាក្នុងការ Upload៖ ' + err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="upload-cloud"></i> បង្កើតរឿង និង Upload`;
+        btn.innerHTML = `<i data-lucide="upload-cloud" class="w-5 h-5"></i> <span>បង្កើតរឿង និង Upload ចូលប្រព័ន្ធ</span>`;
         lucide.createIcons();
       }
     });
@@ -314,7 +341,7 @@
         alert('Upload ភាគថ្មីបរាជ័យ៖ ' + err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="plus"></i> បញ្ចូលភាគថ្មីនេះ`;
+        btn.innerHTML = `<i data-lucide="plus" class="w-4 h-4"></i> <span>បញ្ចូលភាគថ្មីនេះ</span>`;
         lucide.createIcons();
       }
     });
