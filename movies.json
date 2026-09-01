@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "title": "បណ្តាសាក្រៅ ២",
+    "price": "$2.50",
+    "cover": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80",
+    "episodes": [
+      {
+        "epTitle": "ភាគ ១",
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      }
+    ]
+  }
+]
