@@ -14,25 +14,14 @@
 </head>
 <body class="text-white pb-24 select-none font-sans">
 
-  <!-- Navbar -->
+  <!-- Navbar (គ្មានកាបូបលុយទេ) -->
   <header class="fixed top-0 inset-x-0 h-16 bg-black/60 backdrop-blur-md z-40 flex items-center justify-between px-4 md:px-8 border-b border-white/5">
     <div class="flex items-center gap-3">
       <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">A</div>
       <span class="text-lg md:text-xl font-bold tracking-tight">Angkor DC</span>
     </div>
-
-    <!-- User Info & Balance -->
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2 bg-neutral-900 border border-amber-500/30 px-3 py-1.5 rounded-full">
-        <i data-lucide="wallet" class="w-4 h-4 text-amber-400"></i>
-        <div class="text-xs text-left">
-          <span class="text-neutral-400 text-[9px] block leading-none">សមតុល្យ</span>
-          <span id="userBalanceDisplay" class="font-bold text-amber-400">$0.00</span>
-        </div>
-      </div>
-      <div class="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center">
-        <i data-lucide="user" class="w-5 h-5 text-neutral-300"></i>
-      </div>
+    <div class="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center">
+      <i data-lucide="user" class="w-5 h-5 text-neutral-300"></i>
     </div>
   </header>
 
@@ -54,6 +43,10 @@
     <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
       <i data-lucide="search" class="w-5 h-5"></i>
       <span>Search</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
+      <i data-lucide="bell" class="w-5 h-5"></i>
+      <span>Notifications</span>
     </div>
     <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
       <i data-lucide="film" class="w-5 h-5"></i>
@@ -86,7 +79,7 @@
     </div>
   </div>
 
-  <!-- Modal ស្កេន KHQR (លោតចេញភ្លាមៗពេលភ្ញៀវចុចលើរឿង) -->
+  <!-- Modal ស្កេន KHQR (លោតភ្លាមៗពេលភ្ញៀវចុចលើរឿង) -->
   <div id="qrPayModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 max-w-sm w-full relative shadow-2xl text-center">
       <button onclick="closeQrModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
@@ -136,22 +129,6 @@
       return id;
     }
 
-    function getBalance() {
-      const uid = getUserId();
-      const bal = localStorage.getItem(`wallet_bal_${uid}`);
-      return bal !== null ? parseFloat(bal) : 0.00;
-    }
-
-    function setBalance(amount) {
-      const uid = getUserId();
-      localStorage.setItem(`wallet_bal_${uid}`, amount.toFixed(2));
-      updateBalanceUI();
-    }
-
-    function updateBalanceUI() {
-      document.getElementById('userBalanceDisplay').innerText = `$${getBalance().toFixed(2)}`;
-    }
-
     const defaultMovies = [
       { 
         id: '1', 
@@ -193,20 +170,20 @@
       return isNaN(num) ? 0 : num;
     }
 
-    // ពេលភ្ញៀវចុចលើរឿងណាមួយ
+    // ពេលភ្ញៀវចុចលើរឿង
     function handleWatchClick(movieId) {
       const data = localStorage.getItem('angkor_movies');
       const movies = data ? JSON.parse(data) : defaultMovies;
       const movie = movies.find(m => m.id === movieId);
       if (!movie) return;
 
-      // បើរឿងទិញរួច ឬ Free -> ចាក់មើលភ្លាម
+      // បើរឿងទិញរួច ឬ Free -> បើកមើលភ្លាម
       if (isMovieUnlocked(movie)) {
         openPlayer(movieId, 0);
         return;
       }
 
-      // បើមិនទាន់ទិញ -> លោតផ្ទាំង QR ភ្លាមៗ
+      // បើមិនទាន់ទិញ -> លោតផ្ទាំង KHQR ភ្លាមៗ
       selectedMovieToPay = movie;
       const price = parseMoviePrice(movie.price);
 
@@ -223,7 +200,7 @@
       document.getElementById('qrPayModal').classList.remove('flex');
     }
 
-    // ផ្ញើស្លីបទៅកាន់ Telegram
+    // ផ្ញើស្លីបទៅ Telegram Bot
     document.getElementById('slipForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('sendSlipBtn');
@@ -241,13 +218,13 @@
         formData.append('chat_id', TELEGRAM_CHAT_ID);
         formData.append('photo', file);
         formData.append('parse_mode', 'HTML');
-        formData.append('caption', `🔔 <b>មានការស្នើសុំទស្សនារឿង!</b>\n\n🎬 <b>រឿង:</b> ${movieTitle}\n👤 <b>User ID:</b> <code>${uid}</code>\n💵 <b>តម្លៃ:</b> $${amount}\n⏰ <b>ម៉ោង:</b> ${new Date().toLocaleTimeString()}`);
+        formData.append('caption', `🔔 <b>មានការស្នើសុំទស្សនារឿងថ្មី!</b>\n\n🎬 <b>រឿង:</b> ${movieTitle}\n👤 <b>User ID:</b> <code>${uid}</code>\n💵 <b>តម្លៃ:</b> $${amount}\n⏰ <b>ម៉ោង:</b> ${new Date().toLocaleTimeString()}`);
         
         const inlineKeyboard = {
           inline_keyboard: [
             [
-              { text: `✅ ដាក់លុយ ($${amount})`, callback_data: `APPROVE:${uid}:${amount}:${movieId}` },
-              { text: `❌ បោះបង់`, callback_data: `REJECT:${uid}` }
+              { text: `✅ អនុម័តឱ្យមើល ($${amount})`, callback_data: `APPROVE:${uid}:${amount}:${movieId}` },
+              { text: `❌ បដិសេធ`, callback_data: `REJECT:${uid}` }
             ]
           ]
         };
@@ -260,7 +237,7 @@
 
         const data = await res.json();
         if (data.ok) {
-          alert('វិក្កយបត្រត្រូវបានផ្ញើជូន Admin ជោគជ័យ! សូមរង់ចាំ Admin ចុច Approve ក្នុង Telegram នោះវីដេអូនឹងចាក់ជូនភ្លាមៗ។');
+          alert('វិក្កយបត្រត្រូវបានផ្ញើជូន Admin ជោគជ័យ! សូមរង់ចាំ Admin ចុចអនុម័ត នោះវីដេអូនឹងចាក់ជូនភ្លាមៗ។');
           closeQrModal();
           document.getElementById('slipForm').reset();
         } else {
@@ -275,7 +252,7 @@
       }
     });
 
-    // ត្រួតពិនិត្យការចុច Approve ពី Telegram Bot (Auto-Sync)
+    // ត្រួតពិនិត្យការចុចពី Telegram Bot ដោយស្វ័យប្រវត្តិ
     let lastUpdateId = 0;
     async function checkTelegramUpdates() {
       try {
@@ -292,8 +269,6 @@
 
               if (targetUid === myUid) {
                 if (action === 'APPROVE') {
-                  const addAmt = parseFloat(amt);
-                  setBalance(getBalance() + addAmt);
                   if (targetMovieId) {
                     addPurchasedMovie(targetMovieId);
                   }
@@ -305,29 +280,29 @@
                     body: JSON.stringify({
                       chat_id: TELEGRAM_CHAT_ID,
                       message_id: update.callback_query.message.message_id,
-                      caption: `✅ <b>បានអនុម័តឱ្យ User ${myUid} ទស្សនារួចរាល់! ($${addAmt})</b>`,
+                      caption: `✅ <b>បានអនុម័តឱ្យ User ${myUid} ទស្សនារួចរាល់! ($${amt})</b>`,
                       parse_mode: 'HTML'
                     })
                   });
 
-                  alert(`🎉 អបអរសាទរ! អេតមីនបានអនុម័តការបង់ប្រាក់រួចរាល់ហើយ។ សូមរីករាយទស្សនា!`);
+                  alert(`🎉 អបអរសាទរ! អេតមីនបានអនុម័តរួចរាល់ហើយ។ សូមរីករាយទស្សនា!`);
                   if (targetMovieId) {
                     openPlayer(targetMovieId, 0);
                   }
                 } else if (action === 'REJECT') {
-                  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery?callback_query_id=${update.callback_query.id}&text=បានបោះបង់!`);
+                  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery?callback_query_id=${update.callback_query.id}&text=បានបដិសេធ!`);
                   await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageCaption`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                       chat_id: TELEGRAM_CHAT_ID,
                       message_id: update.callback_query.message.message_id,
-                      caption: `❌ <b>បានបោះបង់ការស្នើសុំរបស់ User ${myUid}!</b>`,
+                      caption: `❌ <b>បានបដិសេធការស្នើសុំរបស់ User ${myUid}!</b>`,
                       parse_mode: 'HTML'
                     })
                   });
 
-                  alert(`❌ ការស្នើសុំរបស់អ្នកត្រូវបានបដិសេធ។`);
+                  alert(`❌ ការស្នើសុំទស្សនារបស់អ្នកត្រូវបានបដិសេធ។`);
                 }
               }
             }
@@ -339,7 +314,6 @@
     setInterval(checkTelegramUpdates, 3000);
 
     function loadData() {
-      updateBalanceUI();
       const data = localStorage.getItem('angkor_movies');
       const movies = data ? JSON.parse(data) : defaultMovies;
 
