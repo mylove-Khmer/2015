@@ -22,10 +22,7 @@
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-xl shadow-lg shadow-amber-500/20">A</div>
         <div>
           <h1 class="text-lg md:text-xl font-bold text-amber-400 leading-none">Angkor DC Control Panel</h1>
-          <p class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1.5 font-semibold">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            ប្រព័ន្ធ Live Auto-Save ដំណើរការ
-          </p>
+          <p class="text-[11px] text-neutral-400 mt-1">ផ្ទាំងគ្រប់គ្រងរឿងភាគ & វីដេអូ</p>
         </div>
       </div>
       <a href="index.html" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-4 py-2.5 rounded-xl border border-neutral-700 font-semibold transition flex items-center gap-1.5 shadow-sm">
@@ -38,7 +35,7 @@
     <section class="bg-neutral-900/90 border border-neutral-800 rounded-2xl p-5 md:p-7 shadow-xl">
       <h2 class="text-base font-bold mb-5 flex items-center gap-2 text-white border-b border-neutral-800 pb-3">
         <i data-lucide="plus-circle" class="text-amber-400 w-5 h-5"></i>
-        <span>បង្កើតរឿងថ្មី (Upload ភ្លាម ភ្ញៀវឃើញភ្លាម)</span>
+        <span>បង្កើតរឿងថ្មី (និង Upload ភាគ ១)</span>
       </h2>
 
       <form id="createMovieForm" class="space-y-4">
@@ -65,22 +62,36 @@
 
         <button type="submit" id="createBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-xl transition active:scale-98 flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/10">
           <i data-lucide="upload-cloud" class="w-5 h-5"></i>
-          <span>Upload និងផ្សាយចេញភ្លាមៗ</span>
+          <span>Upload រឿង និង វីដេអូ</span>
         </button>
       </form>
     </section>
 
-    <!-- បញ្ជីរឿងទាំងអស់ -->
-    <section class="space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold flex items-center gap-2">
-          <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
-          <span>បញ្ជីរឿងដែលមានស្រាប់</span>
-        </h2>
-        <button onclick="loadDatabaseData()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+    <!-- ប្រអប់ Sync JSON ទៅកាន់ GitHub -->
+    <section class="bg-gradient-to-br from-amber-500/10 via-neutral-900 to-neutral-900 border border-amber-500/30 rounded-2xl p-5 shadow-xl">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
+        <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+          <i data-lucide="file-json" class="w-4 h-4"></i>
+          <span>រក្សាទុកទិន្នន័យទៅកាន់ GitHub</span>
+        </h3>
+        <button onclick="copyJsonCode()" class="bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 transition active:scale-95">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span>Copy កូដ JSON ទាំងអស់</span>
         </button>
       </div>
+      <textarea id="jsonOutput" readonly class="w-full h-24 bg-black/70 border border-neutral-800 rounded-xl p-3 text-xs font-mono text-neutral-300 focus:outline-none"></textarea>
+      <p class="text-[11px] text-neutral-400 mt-2 flex items-center gap-1.5">
+        <i data-lucide="info" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i>
+        <span>ចុច <b>"Copy កូដ JSON ទាំងអស់"</b> រួចយកទៅ Paste ក្នុង file <b><code>movies.json</code></b> លើ GitHub ដើម្បីរក្សាទុករឿងជារៀងរហូត។</span>
+      </p>
+    </section>
+
+    <!-- បញ្ជីរឿងទាំងអស់ -->
+    <section class="space-y-3">
+      <h2 class="text-base font-bold flex items-center gap-2">
+        <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
+        <span>បញ្ជីរឿងដែលមានស្រាប់</span>
+      </h2>
       <div id="movieList" class="space-y-4"></div>
     </section>
 
@@ -116,7 +127,6 @@
   <script>
     const CLOUD_NAME = "slntwp4h";
     const UPLOAD_PRESET = "my_preset";
-    const DB_ENDPOINT = "https://angkor-dc-stream-default-rtdb.firebaseio.com/movies.json";
 
     let movies = [];
 
@@ -132,33 +142,33 @@
       }
     ];
 
-    async function loadDatabaseData() {
+    async function initData() {
       try {
-        const res = await fetch(DB_ENDPOINT + '?t=' + Date.now());
+        const res = await fetch('movies.json?t=' + Date.now());
         if (res.ok) {
-          const data = await res.json();
-          movies = Array.isArray(data) && data.length > 0 ? data : defaultMovies;
+          movies = await res.json();
         } else {
-          movies = defaultMovies;
+          const local = localStorage.getItem('angkor_movies');
+          movies = local ? JSON.parse(local) : defaultMovies;
         }
       } catch (e) {
-        movies = defaultMovies;
+        const local = localStorage.getItem('angkor_movies');
+        movies = local ? JSON.parse(local) : defaultMovies;
       }
+      saveAndRefresh();
+    }
+
+    function saveAndRefresh() {
+      localStorage.setItem('angkor_movies', JSON.stringify(movies));
+      document.getElementById('jsonOutput').value = JSON.stringify(movies, null, 2);
       renderList();
     }
 
-    async function syncToDatabase(newList) {
-      movies = newList;
-      renderList();
-      try {
-        await fetch(DB_ENDPOINT, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newList)
-        });
-      } catch (e) {
-        console.error('Sync error:', e);
-      }
+    function copyJsonCode() {
+      const textarea = document.getElementById('jsonOutput');
+      textarea.select();
+      navigator.clipboard.writeText(textarea.value);
+      alert('✅ បាន Copy កូដ JSON ជោគជ័យ! សូមចូលទៅកាន់ GitHub បើក file movies.json រួច Paste ចូល និងចុច Commit changes។');
     }
 
     function uploadToCloudWithProgress(file, resourceType, onProgress) {
@@ -271,16 +281,15 @@
           episodes: [{ epTitle: 'ភាគ ១', videoUrl: videoUrl }]
         };
 
-        btn.innerHTML = `កំពុងផ្សាយចេញទៅកាន់ភ្ញៀវ...`;
-        await syncToDatabase([newMovie, ...movies]);
-        
+        movies.unshift(newMovie);
+        saveAndRefresh();
         e.target.reset();
-        alert('🎉 បាន Upload និងផ្សាយចេញជោគជ័យ ១០០%! ភ្ញៀវគ្រប់រូបអាចមើលឃើញភ្លាមៗ។');
+        alert('🎉 បាន Upload វីដេអូជោគជ័យ! សូមចុចប៊ូតុង "Copy កូដ JSON ទាំងអស់" យកទៅ Paste ក្នុង file movies.json លើ GitHub។');
       } catch (err) {
         alert('មានបញ្ហាក្នុងការ Upload៖ ' + err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="upload-cloud" class="w-5 h-5"></i> <span>Upload និងផ្សាយចេញភ្លាមៗ</span>`;
+        btn.innerHTML = `<i data-lucide="upload-cloud" class="w-5 h-5"></i> <span>Upload រឿង និង វីដេអូ</span>`;
         lucide.createIcons();
       }
     });
@@ -323,10 +332,10 @@
         if (movie) {
           if (!movie.episodes) movie.episodes = [];
           movie.episodes.push({ epTitle, videoUrl });
-          await syncToDatabase([...movies]);
+          saveAndRefresh();
         }
         closeEpModal();
-        alert('🎉 បានបន្ថែមភាគថ្មី និងផ្សាយចេញជោគជ័យ!');
+        alert('🎉 បានបន្ថែមភាគថ្មីជោគជ័យ! សូមចុច "Copy កូដ JSON ទាំងអស់" យកទៅ Paste ក្នុង movies.json លើ GitHub។');
       } catch (err) {
         alert('Upload ភាគថ្មីបរាជ័យ៖ ' + err);
       } finally {
@@ -336,23 +345,24 @@
       }
     });
 
-    async function deleteMovie(id) {
+    function deleteMovie(id) {
       if (confirm('តើអ្នកពិតជាចង់លុបរឿងនេះមែនទេ?')) {
-        await syncToDatabase(movies.filter(m => m.id !== id));
+        movies = movies.filter(m => m.id !== id);
+        saveAndRefresh();
       }
     }
 
-    async function deleteEpisode(movieId, epIdx) {
+    function deleteEpisode(movieId, epIdx) {
       if (confirm('តើអ្នកចង់ដកភាគនេះចេញមែនទេ?')) {
         const movie = movies.find(m => m.id === movieId);
         if (movie && movie.episodes) {
           movie.episodes.splice(epIdx, 1);
-          await syncToDatabase([...movies]);
+          saveAndRefresh();
         }
       }
     }
 
-    loadDatabaseData();
+    initData();
   </script>
 </body>
 </html>
