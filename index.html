@@ -128,6 +128,7 @@
     const TELEGRAM_BOT_TOKEN = "8870525233:AAEMYx2LPfOTgc5CZoC8Q2wVhvIxKeXjt00";
     const TELEGRAM_CHAT_ID = "5915683588";
     const DEFAULT_QR = "khqr.png";
+    const CLOUD_DB_URL = "https://api.npoint.io/08a3f89ee2b202eb8ea3";
 
     let allMovies = [];
     let selectedMovieToPay = null;
@@ -309,18 +310,17 @@
 
     setInterval(checkTelegramUpdates, 3000);
 
+    // ទាញទិន្នន័យពី Cloud Realtime
     async function loadData() {
       try {
-        const res = await fetch('movies.json?t=' + Date.now());
+        const res = await fetch(CLOUD_DB_URL + '?t=' + Date.now());
         if (res.ok) {
           allMovies = await res.json();
         } else {
-          const local = localStorage.getItem('angkor_movies');
-          allMovies = local ? JSON.parse(local) : [];
+          allMovies = [];
         }
       } catch (e) {
-        const local = localStorage.getItem('angkor_movies');
-        allMovies = local ? JSON.parse(local) : [];
+        allMovies = [];
       }
 
       if (allMovies.length > 0) {
