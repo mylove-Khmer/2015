@@ -18,7 +18,6 @@
 <body class="text-white p-4 md:p-8 select-none">
   <div class="max-w-4xl mx-auto space-y-6">
     
-    <!-- Top Header -->
     <header class="flex justify-between items-center bg-neutral-900/90 border border-neutral-800 p-4 md:p-5 rounded-2xl backdrop-blur-md shadow-xl">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-xl shadow-lg shadow-amber-500/20">A</div>
@@ -35,7 +34,6 @@
       </a>
     </header>
 
-    <!-- Form បង្កើត/កែប្រែរឿង -->
     <section class="bg-neutral-900/90 border border-neutral-800 rounded-2xl p-5 md:p-7 shadow-xl space-y-5">
       <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
         <h2 id="formHeader" class="text-base font-bold flex items-center gap-2 text-white">
@@ -53,7 +51,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="text-xs text-neutral-400 block mb-1.5 font-medium">ចំណងជើងរឿង *</label>
-            <input type="text" id="mTitle" required placeholder="ឧ. រឿង កូនស្រីមេភូមិ" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none">
+            <input type="text" id="mTitle" required placeholder="ឧ. រឿង បឹងមរណៈ" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none">
           </div>
           <div>
             <label class="text-xs text-neutral-400 block mb-1.5 font-medium">តម្លៃ ($) *</label>
@@ -61,7 +59,6 @@
           </div>
         </div>
 
-        <!-- Poster Upload & URL -->
         <div>
           <label class="text-xs text-neutral-400 block mb-1.5 font-medium">រូបភាព Poster រឿង *</label>
           <div class="flex flex-col sm:flex-row gap-3 items-start">
@@ -76,12 +73,11 @@
           </div>
         </div>
 
-        <!-- Episodes Manager -->
         <div class="border-t border-neutral-800 pt-4 space-y-3">
           <div class="flex items-center justify-between">
             <label class="text-xs text-neutral-300 font-bold flex items-center gap-1.5">
               <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
-              <span>បញ្ជីភាគវីដេអូ (Episodes) *</span>
+              <span>បញ្ជីភាគវីដេអូ (Episodes) [គាំទ្រ YouTube & MP4] *</span>
             </label>
             <button type="button" onclick="addEpisodeField()" class="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> បន្ថែមភាគ
@@ -91,10 +87,7 @@
           <div id="episodesContainer" class="space-y-3"></div>
         </div>
 
-        <!-- Test Player Frame -->
-        <div id="testPlayerContainer" class="mt-3 hidden rounded-2xl overflow-hidden border border-neutral-800 bg-black aspect-video max-w-lg mx-auto">
-          <video id="testVideo" controls class="w-full h-full object-contain"></video>
-        </div>
+        <div id="testPlayerContainer" class="mt-3 hidden rounded-2xl overflow-hidden border border-neutral-800 bg-black aspect-video max-w-lg mx-auto"></div>
 
         <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 rounded-xl transition active:scale-98 flex items-center justify-center gap-2 text-sm shadow-lg shadow-amber-500/20">
           <i data-lucide="upload-cloud" class="w-5 h-5"></i>
@@ -103,7 +96,6 @@
       </form>
     </section>
 
-    <!-- Movie Items List -->
     <section class="space-y-3">
       <h2 class="text-base font-bold flex items-center gap-2">
         <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
@@ -144,7 +136,13 @@
     const cancelEditBtn = document.getElementById('cancelEditBtn');
     const formHeader = document.getElementById('formHeader');
 
-    // Preview រូប Poster និង Compress
+    function getYouTubeId(url) {
+      if (!url) return null;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
+
     coverFileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -186,13 +184,12 @@
       }
     });
 
-    // បន្ថែមជួរភាគវីដេអូ
     function addEpisodeField(epTitle = '', videoUrl = '') {
       const div = document.createElement('div');
       div.className = 'episode-row flex flex-col sm:flex-row gap-2 bg-neutral-800/60 p-2.5 rounded-xl border border-neutral-700/80 items-center';
       div.innerHTML = `
         <input type="text" placeholder="ចំណងជើងភាគ (ឧ. ភាគ ១)" value="${epTitle}" required class="ep-title w-full sm:w-1/3 bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-xs focus:border-amber-400 focus:outline-none">
-        <input type="url" placeholder="Direct MP4 Link (Telegram / CDN)" value="${videoUrl}" required class="ep-url w-full sm:w-7/12 bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-xs focus:border-amber-400 focus:outline-none">
+        <input type="url" placeholder="Link YouTube ឬ MP4" value="${videoUrl}" required class="ep-url w-full sm:w-7/12 bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-xs focus:border-amber-400 focus:outline-none">
         <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end">
           <button type="button" onclick="testPlayDirect(this)" class="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-amber-400" title="តេស្តចាក់">
             <i data-lucide="play" class="w-3.5 h-3.5"></i>
@@ -219,18 +216,31 @@
       const row = btn.closest('.episode-row');
       const url = row.querySelector('.ep-url').value.trim();
       const cont = document.getElementById('testPlayerContainer');
-      const v = document.getElementById('testVideo');
       if (!url) {
         alert('សូមបិទភ្ជាប់ Link វីដេអូសិន!');
         return;
       }
+
       cont.classList.remove('hidden');
-      v.src = url;
-      v.load();
-      v.play().catch(e => console.log(e));
+      const ytId = getYouTubeId(url);
+      if (ytId) {
+        cont.innerHTML = `
+          <iframe class="w-full h-full" 
+            src="https://www.youtube.com/embed/${ytId}?autoplay=1" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        `;
+      } else {
+        cont.innerHTML = `
+          <video controls autoplay class="w-full h-full object-contain">
+            <source src="${url}" type="video/mp4">
+          </video>
+        `;
+      }
     }
 
-    // អានទិន្នន័យពី Firebase Realtime
     db.collection("movies").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
       cachedMovies = [];
       let html = "";
@@ -269,7 +279,6 @@
       lucide.createIcons();
     });
 
-    // បញ្ចូល ឬ កែប្រែរឿង
     movieForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentCoverData) {
@@ -355,7 +364,7 @@
       coverPreview.classList.add('hidden');
       noCoverText.classList.remove('hidden');
       document.getElementById('testPlayerContainer').classList.add('hidden');
-      document.getElementById('testVideo').pause();
+      document.getElementById('testPlayerContainer').innerHTML = '';
 
       episodesContainer.innerHTML = '';
       addEpisodeField('ភាគ ១', '');
