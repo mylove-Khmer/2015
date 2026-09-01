@@ -107,6 +107,7 @@
     const TELEGRAM_BOT_TOKEN = "8870525233:AAEMYx2LPfOTgc5CZoC8Q2wVhvIxKeXjt00";
     const TELEGRAM_CHAT_ID = "5915683588";
     const DEFAULT_QR = "khqr.png";
+    const DB_ENDPOINT = "https://angkor-dc-stream-default-rtdb.firebaseio.com/movies.json";
 
     const defaultMovies = [
       {
@@ -115,8 +116,7 @@
         price: "$2.50",
         cover: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80",
         episodes: [
-          { epTitle: "ភាគ ១", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
-          { epTitle: "ភាគ ២", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" }
+          { epTitle: "ភាគ ១", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" }
         ]
       }
     ];
@@ -301,22 +301,16 @@
 
     setInterval(checkTelegramUpdates, 3000);
 
-    // ទាញយកទិន្នន័យដោយសុវត្ថិភាព មិនឱ្យចេញផ្ទាំងខ្មៅដាច់ខាត
     async function loadData() {
       try {
-        const res = await fetch('movies.json?t=' + Date.now());
+        const res = await fetch(DB_ENDPOINT + '?t=' + Date.now());
         if (res.ok) {
-          allMovies = await res.json();
+          const data = await res.json();
+          allMovies = Array.isArray(data) && data.length > 0 ? data : defaultMovies;
         } else {
-          const local = localStorage.getItem('angkor_movies');
-          allMovies = local ? JSON.parse(local) : defaultMovies;
+          allMovies = defaultMovies;
         }
       } catch (e) {
-        const local = localStorage.getItem('angkor_movies');
-        allMovies = local ? JSON.parse(local) : defaultMovies;
-      }
-
-      if (!allMovies || allMovies.length === 0) {
         allMovies = defaultMovies;
       }
 
