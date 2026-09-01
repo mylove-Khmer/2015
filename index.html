@@ -32,7 +32,7 @@
 
   <!-- Movie List Carousel -->
   <section class="px-6 mt-4">
-    <h2 class="text-lg font-bold mb-4">ភាពយន្តទាំងអស់</h2>
+    <h2 class="text-lg font-bold mb-4">ភាពយន្ត និងរឿងភាគទាំងអស់</h2>
     <div id="moviesRow" class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
       <!-- Rendered by JS -->
     </div>
@@ -58,17 +58,35 @@
     </div>
   </nav>
 
-  <!-- Video Player Modal -->
-  <div id="videoModal" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-center p-4">
-    <div class="w-full max-w-4xl relative">
-      <button onclick="closePlayer()" class="absolute -top-10 right-0 text-neutral-400 hover:text-white flex items-center gap-1 font-bold text-sm">
-        <i data-lucide="x" class="w-6 h-6"></i> បិទ
-      </button>
-      <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800">
+  <!-- Video Player Modal (មានបញ្ជីភាគនៅខាងក្រោម) -->
+  <div id="videoModal" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-start overflow-y-auto p-4 md:p-8">
+    <div class="w-full max-w-4xl relative mt-2 md:mt-6">
+      
+      <!-- ប៊ូតុងបិទ -->
+      <div class="flex items-center justify-between mb-3">
+        <h3 id="playerMovieTitle" class="font-bold text-base md:text-lg text-amber-400 truncate">ចំណងជើងរឿង</h3>
+        <button onclick="closePlayer()" class="text-neutral-400 hover:text-white flex items-center gap-1 font-bold text-sm bg-neutral-800/80 px-3 py-1.5 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i> បិទ
+        </button>
+      </div>
+
+      <!-- ផ្ទាំងវីដេអូ Player -->
+      <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 mb-5">
         <video id="mainVideo" controls playsinline class="w-full aspect-video">
           <source id="videoSource" src="" type="video/mp4">
         </video>
       </div>
+
+      <!-- ផ្នែកបញ្ជីភាគទាំងអស់ (Episodes List) -->
+      <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-6 mb-8">
+        <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+          <i data-lucide="list-video" class="w-4 h-4 text-amber-400"></i> ជ្រើសរើសភាគដើម្បីទស្សនា៖
+        </h4>
+        <div id="episodesListContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+          <!-- បញ្ជីភាគនឹងបង្ហាញនៅត្រង់នេះតាមរយៈ JS -->
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -79,9 +97,16 @@
         title: 'បណ្តាសាក្រៅ ២', 
         price: '$2.50', 
         cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80', 
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' 
+        episodes: [
+          { epTitle: 'ភាគ ១', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+          { epTitle: 'ភាគ ២', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
+          { epTitle: 'ភាគ ៣ (ចប់)', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }
+        ]
       }
     ];
+
+    let currentMovie = null;
+    let currentEpIndex = 0;
 
     function loadData() {
       const data = localStorage.getItem('angkor_movies');
@@ -95,20 +120,21 @@
           <div class="max-w-xl">
             <span class="text-xs bg-amber-500 text-black font-black px-2 py-0.5 rounded uppercase tracking-wider mb-2 inline-block">តម្លៃ៖ ${hero.price}</span>
             <h1 class="text-3xl font-black mb-4">${hero.title}</h1>
-            <button onclick="openPlayer('${hero.videoUrl}')" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2">
+            <button onclick="openPlayer('${hero.id}', 0)" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2">
               <i data-lucide="play" class="w-5 h-5 fill-black"></i> Play Now
             </button>
           </div>
         `;
 
         document.getElementById('moviesRow').innerHTML = movies.map(m => `
-          <div onclick="openPlayer('${m.videoUrl}')" class="min-w-[140px] md:min-w-[170px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
+          <div onclick="openPlayer('${m.id}', 0)" class="min-w-[140px] md:min-w-[170px] rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200">
             <div class="relative">
               <img src="${m.cover}" class="w-full h-48 object-cover" />
               <span class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">${m.price}</span>
             </div>
             <div class="p-3">
               <p class="text-xs font-semibold truncate text-white">${m.title}</p>
+              <p class="text-[10px] text-neutral-400 mt-0.5">${m.episodes ? m.episodes.length : 1} ភាគ</p>
             </div>
           </div>
         `).join('');
@@ -123,14 +149,60 @@
     const video = document.getElementById('mainVideo');
     const videoSource = document.getElementById('videoSource');
 
-    function openPlayer(url) {
-      if (!url) return;
-      videoSource.src = url;
-      video.load();
+    function openPlayer(movieId, epIndex = 0) {
+      const data = localStorage.getItem('angkor_movies');
+      const movies = data ? JSON.parse(data) : defaultMovies;
+      currentMovie = movies.find(m => m.id === movieId);
+
+      if (!currentMovie) return;
+      currentEpIndex = epIndex;
+
+      // ករណីរឿងចាស់មានតែ videoUrl តែមួយ
+      const eps = currentMovie.episodes || [{ epTitle: 'ភាគ ១', videoUrl: currentMovie.videoUrl }];
+      currentMovie.episodes = eps;
+
+      playEpisode(epIndex);
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-      video.play().catch(e => console.log('Autoplay prevent:', e));
     }
+
+    function playEpisode(index) {
+      currentEpIndex = index;
+      const ep = currentMovie.episodes[index];
+      if (!ep) return;
+
+      document.getElementById('playerMovieTitle').innerText = `${currentMovie.title} - ${ep.epTitle}`;
+      videoSource.src = ep.videoUrl;
+      video.load();
+      video.play().catch(e => console.log('Autoplay prevent:', e));
+
+      renderEpisodesList();
+    }
+
+    function renderEpisodesList() {
+      const container = document.getElementById('episodesListContainer');
+      container.innerHTML = currentMovie.episodes.map((ep, idx) => {
+        const isActive = idx === currentEpIndex;
+        return `
+          <button onclick="playEpisode(${idx})" class="p-3 rounded-xl border text-xs font-bold transition flex items-center justify-between ${
+            isActive 
+              ? 'bg-amber-500 text-black border-amber-500 shadow-lg shadow-amber-500/20' 
+              : 'bg-neutral-800/80 hover:bg-neutral-800 text-neutral-300 border-neutral-700 hover:border-neutral-500'
+          }">
+            <span class="truncate">${ep.epTitle}</span>
+            <i data-lucide="${isActive ? 'volume-2' : 'play'}" class="w-4 h-4 shrink-0"></i>
+          </button>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // ពេលវីដេអូចប់មួយភាគ ចាក់ភាគបន្ទាប់ដោយស្វ័យប្រវត្តិ
+    video.onended = () => {
+      if (currentMovie && currentEpIndex + 1 < currentMovie.episodes.length) {
+        playEpisode(currentEpIndex + 1);
+      }
+    };
 
     function closePlayer() {
       video.pause();
