@@ -14,15 +14,15 @@
 </head>
 <body class="text-white pb-24 select-none font-sans">
 
-  <!-- Navbar -->
+  <!-- Navbar (ដកពាក្យ Admin ចេញ ជំនួសដោយរូប Profile ដូច Angkor DC) -->
   <header class="fixed top-0 inset-x-0 h-16 bg-black/60 backdrop-blur-md z-40 flex items-center justify-between px-6 border-b border-white/5">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg">A</div>
+      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-amber-500/20">A</div>
       <span class="text-xl font-bold tracking-tight">Angkor DC</span>
     </div>
-    <a href="admin.html" class="text-xs bg-neutral-800 text-neutral-300 hover:text-white px-3 py-1.5 rounded-full border border-neutral-700">
-      ចូល Admin
-    </a>
+    <div class="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center cursor-pointer hover:border-amber-500 transition">
+      <i data-lucide="user" class="w-5 h-5 text-neutral-300"></i>
+    </div>
   </header>
 
   <!-- Hero Section -->
@@ -38,6 +38,26 @@
     </div>
   </section>
 
+  <!-- Bottom Navigation Bar -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-[#0d0d11]/95 border-t border-neutral-800 backdrop-blur-md flex justify-around py-3 z-40 text-neutral-400 text-xs">
+    <div class="flex flex-col items-center gap-1 text-amber-500 cursor-pointer">
+      <i data-lucide="home" class="w-5 h-5"></i>
+      <span>Home</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
+      <i data-lucide="search" class="w-5 h-5"></i>
+      <span>Search</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
+      <i data-lucide="bell" class="w-5 h-5"></i>
+      <span>Notifications</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 hover:text-white cursor-pointer">
+      <i data-lucide="film" class="w-5 h-5"></i>
+      <span>Library</span>
+    </div>
+  </nav>
+
   <!-- Video Player Modal -->
   <div id="videoModal" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-center p-4">
     <div class="w-full max-w-4xl relative">
@@ -45,8 +65,8 @@
         <i data-lucide="x" class="w-6 h-6"></i> បិទ
       </button>
       <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800">
-        <video id="mainVideo" controls class="w-full aspect-video">
-          <source src="" type="video/mp4">
+        <video id="mainVideo" controls playsinline class="w-full aspect-video">
+          <source id="videoSource" src="" type="video/mp4">
         </video>
       </div>
     </div>
@@ -54,7 +74,13 @@
 
   <script>
     const defaultMovies = [
-      { id: '1', title: 'បណ្តាសាក្រៅ ២', price: '$2.50', cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
+      { 
+        id: '1', 
+        title: 'បណ្តាសាក្រៅ ២', 
+        price: '$2.50', 
+        cover: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80', 
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' 
+      }
     ];
 
     function loadData() {
@@ -95,17 +121,21 @@
 
     const modal = document.getElementById('videoModal');
     const video = document.getElementById('mainVideo');
+    const videoSource = document.getElementById('videoSource');
 
     function openPlayer(url) {
-      video.src = url;
+      if (!url) return;
+      videoSource.src = url;
+      video.load();
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-      video.play();
+      video.play().catch(e => console.log('Autoplay prevent:', e));
     }
 
     function closePlayer() {
       video.pause();
-      video.src = '';
+      videoSource.src = '';
+      video.load();
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
