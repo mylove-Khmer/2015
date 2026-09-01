@@ -94,11 +94,43 @@
   </div>
 
   <script>
+    // ==========================================
+    // កន្លែងដាក់បញ្ជីរឿងផ្ទាល់ (កែប្រែត្រង់នេះបានភ្លាមៗ)
+    // ==========================================
+    const allMovies = [
+      {
+        id: "1",
+        title: "រឿង កូនស្រីមេភូមិ",
+        price: "$2.50",
+        cover: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80",
+        episodes: [
+          {
+            epTitle: "ភាគ ១",
+            videoUrl: "https://www.youtube.com/watch?v=wqDMawHXPPY"
+          }
+        ]
+      },
+      {
+        id: "2",
+        title: "ចុចខាងក្រោមដើម្បីមើល",
+        price: "$3.00",
+        cover: "https://res.cloudinary.com/slntwp4h/image/upload/v1788290200/r1qciu7hh8htejj4kw5r.jpg",
+        episodes: [
+          {
+            epTitle: "ភាគ ១",
+            videoUrl: "https://res.cloudinary.com/slntwp4h/video/upload/v1788290202/kuzl8kl8mkiazw5fl0vc.mp4"
+          }
+        ]
+      }
+    ];
+
+    // ==========================================
+    // ប្រព័ន្ធទូទាត់ & Telegram Bot
+    // ==========================================
     const TELEGRAM_BOT_TOKEN = "8870525233:AAEMYx2LPfOTgc5CZoC8Q2wVhvIxKeXjt00";
     const TELEGRAM_CHAT_ID = "5915683588";
     const DEFAULT_QR = "khqr.png";
 
-    let allMovies = [];
     let selectedMovieToPay = null;
     let currentMovie = null;
     let currentEpIndex = 0;
@@ -278,19 +310,8 @@
 
     setInterval(checkTelegramUpdates, 3000);
 
-    // ទាញយកទិន្នន័យពី movies.json ផ្ទាល់
-    async function loadData() {
-      try {
-        const res = await fetch('movies.json?t=' + Date.now());
-        if (res.ok) {
-          allMovies = await res.json();
-        } else {
-          allMovies = [];
-        }
-      } catch (e) {
-        allMovies = [];
-      }
-
+    // បង្ហាញរឿងលើទំព័រមុខ
+    function loadData() {
       if (allMovies && allMovies.length > 0) {
         const hero = allMovies[0];
         document.getElementById('heroSection').innerHTML = `
@@ -364,12 +385,10 @@
       const ytId = extractYouTubeId(url);
 
       if (ytId) {
-        // បើជា Link YouTube
         playerContainer.innerHTML = `
           <iframe class="w-full h-full rounded-2xl" src="https://www.youtube.com/embed/${ytId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         `;
       } else {
-        // បើជា Link MP4 / Cloudinary / File
         playerContainer.innerHTML = `
           <video id="mainVideo" controls autoplay playsinline class="w-full h-full rounded-2xl">
             <source src="${url}" type="video/mp4">
