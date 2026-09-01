@@ -32,7 +32,7 @@
   </header>
 
   <!-- Hero Section -->
-  <div id="heroSection" class="relative h-[68vh] flex flex-col justify-end px-6 pb-8"></div>
+  <div id="heroSection" class="relative min-h-[50vh] md:min-h-[60vh] flex flex-col justify-end px-6 pb-8 pt-24"></div>
 
   <!-- Movie Carousel -->
   <section class="px-6 mt-4">
@@ -53,14 +53,12 @@
         </button>
       </div>
 
-      <!-- Player Frame សុទ្ធសាធ (MP4) -->
       <div class="w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 mb-5 aspect-video flex items-center justify-center">
         <video id="mainVideo" controls playsinline class="w-full h-full object-contain">
           <source id="videoSource" src="" type="video/mp4">
         </video>
       </div>
 
-      <!-- Episodes List -->
       <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 md:p-6 mb-8">
         <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
           <i data-lucide="list-video" class="w-4 h-4 text-amber-400"></i> ជ្រើសរើសភាគដើម្បីទស្សនា៖
@@ -70,7 +68,7 @@
     </div>
   </div>
 
-  <!-- Modal ស្កេន KHQR -->
+  <!-- Modal KHQR -->
   <div id="qrPayModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4 overflow-y-auto">
     <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-5 md:p-7 max-w-md w-full relative shadow-2xl text-center my-auto">
       <button onclick="closeQrModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white bg-neutral-800 p-1.5 rounded-full">
@@ -85,7 +83,6 @@
         <img id="guestKhqrImg" src="khqr.png" class="w-full h-auto object-contain mx-auto block" />
       </div>
 
-      <!-- Form ផ្ញើ Slip ទៅ Telegram Bot -->
       <form id="slipForm" class="space-y-3 text-left">
         <div>
           <label class="text-xs text-neutral-300 block mb-1 font-medium">តម្លៃត្រូវបង់ ($)៖</label>
@@ -106,22 +103,22 @@
   </div>
 
   <script>
-    // ==========================================
-    // បញ្ជីរឿង (មានតែរឿងដែលចង់ដាក់ប៉ុណ្ណោះ)
-    // ==========================================
+    // =======================================================
+    // បញ្ជីរឿងទទេស្អាត (រង់ចាំ Admin យក Link មកដាក់ដោយផ្ទាល់)
+    // =======================================================
     const allMovies = [
+      // ឧទាហរណ៍ពេលចង់ដាក់រឿង ដោះសញ្ញា // ចេញ៖
+      /*
       {
         id: "1",
-        title: "រឿង កូនស្រីមេភូមិ",
+        title: "ឈ្មោះរឿងរបស់អ្នក",
         price: "$2.50",
-        cover: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80",
+        cover: "Link_រូបភាព.jpg",
         episodes: [
-          {
-            epTitle: "ភាគ ១",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-          }
+          { epTitle: "ភាគ ១", videoUrl: "Link_វីដេអូ_MP4" }
         ]
       }
+      */
     ];
 
     const TELEGRAM_BOT_TOKEN = "8870525233:AAEMYx2LPfOTgc5CZoC8Q2wVhvIxKeXjt00";
@@ -308,33 +305,48 @@
     setInterval(checkTelegramUpdates, 3000);
 
     function loadData() {
-      if (allMovies && allMovies.length > 0) {
-        const hero = allMovies[0];
-        document.getElementById('heroSection').innerHTML = `
-          <img src="${hero.cover}" class="absolute inset-0 w-full h-full object-cover -z-10 brightness-75" />
-          <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d11] via-[#0d0d11]/50 to-transparent -z-10"></div>
-          <div class="max-w-xl">
-            <span class="text-xs bg-amber-500 text-black font-black px-2.5 py-1 rounded-lg uppercase tracking-wider mb-2 inline-block shadow">តម្លៃ៖ ${hero.price}</span>
-            <h1 class="text-3xl font-black mb-4 leading-tight">${hero.title}</h1>
-            <button onclick="handleWatchClick('${hero.id}', 0)" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition active:scale-95 shadow-lg shadow-amber-500/20">
-              <i data-lucide="play" class="w-5 h-5 fill-black"></i> ទស្សនាឥឡូវនេះ
-            </button>
+      const heroSec = document.getElementById('heroSection');
+      const rowSec = document.getElementById('moviesRow');
+
+      if (!allMovies || allMovies.length === 0) {
+        heroSec.innerHTML = `
+          <div class="p-12 text-center bg-neutral-900/60 rounded-3xl border border-neutral-800 w-full max-w-xl mx-auto my-auto">
+            <i data-lucide="clapperboard" class="w-12 h-12 mx-auto text-amber-500/60 mb-3 animate-pulse"></i>
+            <h2 class="text-lg font-bold text-white mb-1">សូមស្វាគមន៍មកកាន់ Angkor DC</h2>
+            <p class="text-xs text-neutral-400">បច្ចុប្បន្នអេតមីនមិនទាន់បានបញ្ចូលវីដេអូនៅឡើយទេ។ សូមរង់ចាំការផ្សាយជូនឆាប់ៗនេះ!</p>
           </div>
         `;
-
-        document.getElementById('moviesRow').innerHTML = allMovies.map(m => `
-          <div onclick="handleWatchClick('${m.id}', 0)" class="min-w-[140px] md:min-w-[170px] rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200 shadow-lg">
-            <div class="relative">
-              <img src="${m.cover}" class="w-full h-48 object-cover" />
-              <span class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded-lg">${m.price}</span>
-            </div>
-            <div class="p-3">
-              <p class="text-xs font-semibold truncate text-white">${m.title}</p>
-              <p class="text-[10px] text-neutral-400 mt-0.5">${m.episodes ? m.episodes.length : 1} ភាគ</p>
-            </div>
-          </div>
-        `).join('');
+        rowSec.innerHTML = `<div class="text-xs text-neutral-500 py-4 italic">មិនទាន់មានរឿងនៅក្នុងបញ្ជីនៅឡើយទេ។</div>`;
+        lucide.createIcons();
+        return;
       }
+
+      const hero = allMovies[0];
+      heroSec.innerHTML = `
+        <img src="${hero.cover}" class="absolute inset-0 w-full h-full object-cover -z-10 brightness-75" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d11] via-[#0d0d11]/50 to-transparent -z-10"></div>
+        <div class="max-w-xl">
+          <span class="text-xs bg-amber-500 text-black font-black px-2.5 py-1 rounded-lg uppercase tracking-wider mb-2 inline-block shadow">តម្លៃ៖ ${hero.price}</span>
+          <h1 class="text-3xl font-black mb-4 leading-tight">${hero.title}</h1>
+          <button onclick="handleWatchClick('${hero.id}', 0)" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition active:scale-95 shadow-lg shadow-amber-500/20">
+            <i data-lucide="play" class="w-5 h-5 fill-black"></i> ទស្សនាឥឡូវនេះ
+          </button>
+        </div>
+      `;
+
+      rowSec.innerHTML = allMovies.map(m => `
+        <div onclick="handleWatchClick('${m.id}', 0)" class="min-w-[140px] md:min-w-[170px] rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 cursor-pointer hover:border-amber-500 hover:scale-105 transition duration-200 shadow-lg">
+          <div class="relative">
+            <img src="${m.cover}" class="w-full h-48 object-cover" />
+            <span class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded-lg">${m.price}</span>
+          </div>
+          <div class="p-3">
+            <p class="text-xs font-semibold truncate text-white">${m.title}</p>
+            <p class="text-[10px] text-neutral-400 mt-0.5">${m.episodes ? m.episodes.length : 1} ភាគ</p>
+          </div>
+        </div>
+      `).join('');
+
       lucide.createIcons();
     }
 
